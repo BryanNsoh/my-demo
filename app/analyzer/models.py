@@ -1,30 +1,27 @@
 from pydantic import BaseModel, Field, HttpUrl
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 
 class ExtractedEntity(BaseModel):
-    type: str = Field(..., description="condition|medication|instruction|follow_up")
+    type: Literal["condition", "medication", "instruction", "follow_up"]
     name: Optional[str] = None
     dosage: Optional[str] = None
     text: Optional[str] = None
-    first_mention_turn: Optional[int] = Field(
-        None, description="The 0-based turn index where it was first mentioned."
-    )
-    patient_explanation: Optional[str] = Field(
-        None, description="A patient-friendly explanation of this entity."
-    )
-    link: Optional[HttpUrl] = Field(
-        None, description="A trusted health resource link about this entity."
-    )
+    first_mention_turn: Optional[int] = None
+    patient_explanation: Optional[str] = None
+    # link removed
+    # link: Optional[HttpUrl] = None
+    # Add related turns for provenance
+    # We'll derive these from first_mention_turn if needed.
+    related_turns: List[int] = Field(default_factory=list)
+    needs_clarification: bool = False
 
 
 class AmbiguousTermResolution(BaseModel):
     ambiguous_term: str
     resolved_meaning: str
     reasoning: Optional[str] = None
-    turn_id: int = Field(
-        ..., description="Turn index in which the ambiguous term appeared."
-    )
+    turn_id: int
 
 
 class LLMTermExtractionResponse(BaseModel):
@@ -32,7 +29,13 @@ class LLMTermExtractionResponse(BaseModel):
     context_samples: List[AmbiguousTermResolution] = Field(default_factory=list)
 
 
-class FinalConversationAnalysis(BaseModel):
+class ExecutiveSummary(BaseModel):
+    main_concerns: List[str] = Field(default_factory=list)
+    critical_next_steps: List[str] = Field(default_factory=list)
+
+
+class ConversationAnalysis(BaseModel):
     conversation_id: str
-    entries: List[ExtractedEntity] = Field(default_factory=list)
-    context_samples: List[AmbiguousTermResolution] = Field(default_factory=list)
+    summary: ExecutiveSummary
+    entities: List[ExtractedEntity] = Field(default_factory=list)
+    highlighted_confusions: List[str] = Field(default_factory=list)
