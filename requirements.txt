@@ -1,0 +1,10 @@
+Flask[async]
+pydantic
+python-dotenv
+openai
+anthropic
+pydantic-ai
+logfire
+aiolimiter
+requests
+spacy

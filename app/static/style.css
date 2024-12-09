@@ -1,0 +1,21 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+label,
+select,
+button {
+    margin: 5px 0;
+}
+
+pre {
+    background: #f8f8f8;
+    padding: 10px;
+    border: 1px solid #ccc;
+    overflow-x: auto;
+}

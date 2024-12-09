@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Medical Conversation Analysis Demo</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Medical Conversation Analysis Demo</h1>
+  <div>
+    <label for="conversation-select">Select a conversation:</label>
+    <select id="conversation-select">
+      {% for convo in conversations %}
+        <option value="{{ convo }}">{{ convo }}</option>
+      {% endfor %}
+    </select>
+    <button id="analyze-btn">Analyze</button>
+  </div>
+
+  <div id="loading" style="display:none;">Processing...</div>
+  <pre id="results"></pre>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
