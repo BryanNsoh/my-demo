@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 
 
@@ -9,10 +9,6 @@ class ExtractedEntity(BaseModel):
     text: Optional[str] = None
     first_mention_turn: Optional[int] = None
     patient_explanation: Optional[str] = None
-    # link removed
-    # link: Optional[HttpUrl] = None
-    # Add related turns for provenance
-    # We'll derive these from first_mention_turn if needed.
     related_turns: List[int] = Field(default_factory=list)
     needs_clarification: bool = False
 
@@ -39,3 +35,4 @@ class ConversationAnalysis(BaseModel):
     summary: ExecutiveSummary
     entities: List[ExtractedEntity] = Field(default_factory=list)
     highlighted_confusions: List[str] = Field(default_factory=list)
+    clinician_insights: List[str] = Field(default_factory=list)

@@ -10,14 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         confusionList: document.getElementById('confusion-list'),
         tabBtns: document.querySelectorAll('.tab-btn'),
         filterCheckboxes: document.querySelectorAll('.filter-checkbox'),
-        viewModeBtn: document.getElementById('view-mode-btn'),
-        insightsEl: document.getElementById('insights')
+        insightsEl: document.getElementById('insights'),
+        clinicianInsightsEl: document.getElementById('clinician-insights')
     };
 
     let globalData = {
         analysis: null,
         transcriptLines: [],
-        currentViewMode: 'patient',
         entities: []
     };
 
@@ -61,16 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cb.addEventListener('change', applyFilters);
     });
 
-    ui.viewModeBtn.addEventListener('click', () => {
-        const current = ui.viewModeBtn.getAttribute('data-mode');
-        const newMode = current === 'patient' ? 'clinician' : 'patient';
-        ui.viewModeBtn.setAttribute('data-mode', newMode);
-        ui.viewModeBtn.textContent = newMode.charAt(0).toUpperCase() + newMode.slice(1);
-        globalData.currentViewMode = newMode;
-        renderEntities(globalData.entities);
-        applyFilters();
-    });
-
     function renderResults(data) {
         const { analysis, transcript } = data;
         renderExecutiveSummary(analysis.summary);
@@ -83,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEntities(globalData.entities);
         renderConfusions(analysis.highlighted_confusions);
         renderInsights(globalData.entities);
+        renderClinicianInsights(analysis.clinician_insights);
 
         ui.tabBtns.forEach(b => b.classList.remove('border-b-2', 'border-blue-600', 'text-gray-800'));
         document.querySelector('[data-tab="findings"]').classList.add('border-b-2', 'border-blue-600', 'text-gray-800');
@@ -116,15 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const [type, ents] of Object.entries(grouped)) {
             const container = document.querySelector(`#${type}s .space-y-2`);
             if (!container) continue;
-            container.innerHTML = ents.map(e => entityCard(e, globalData.currentViewMode)).join('');
+            container.innerHTML = ents.map(e => entityCard(e)).join('');
         }
     }
 
-    function entityCard(e, viewMode) {
+    function renderClinicianInsights(insights) {
+        ui.clinicianInsightsEl.innerHTML = insights.map(
+            insight => `<li class="leading-tight list-item list-disc ml-4">${insight}</li>`
+        ).join('');
+    }
+
+    function entityCard(e) {
         const turns = e.related_turns.join(',');
-        const displayText = viewMode === 'patient'
-            ? (e.patient_explanation || e.text || '(No explanation)')
-            : entityClinicianText(e);
+        const displayText = e.patient_explanation || e.text || '(No explanation)';
 
         return `
         <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer relative"
@@ -162,12 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const moreInfo = parent.querySelector('.more-info');
         moreInfo.classList.toggle('hidden');
     };
-
-    function entityClinicianText(e) {
-        let msg = e.text || '(No text)';
-        if (e.needs_clarification) msg += ' [Check clarification]';
-        return msg;
-    }
 
     function getTypeColor(type) {
         const colors = {
