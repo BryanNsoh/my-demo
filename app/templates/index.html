@@ -15,13 +15,20 @@
     transition: max-height 0.3s ease;
     overflow: hidden;
   }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
 </style>
 </head>
-<body class="bg-gray-50 text-sm text-gray-800">
-  <div class="container mx-auto p-4">
+<body class="h-screen bg-gray-50 text-sm text-gray-800 flex flex-col">
 
-    <!-- Top Bar (fixed at top of the container for easy access) -->
-    <div class="sticky top-0 bg-gray-50 z-10 mb-4 pb-2 border-b border-gray-200 flex items-center space-x-2">
+  <!-- Top Container -->
+  <div class="container mx-auto p-4 flex-none">
+    <!-- Top Bar -->
+    <div class="flex items-center space-x-4 mb-4">
       <select id="conversation-select" class="p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
         {% for convo in conversations %}
           <option value="{{ convo }}">{{ convo }}</option>
@@ -30,105 +37,99 @@
       <button id="analyze-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
         Analyze
       </button>
-      <div id="loading" class="hidden text-gray-700 ml-4">Analyzing, please wait...</div>
+      <div id="loading" class="hidden text-gray-700">Analyzing, please wait...</div>
     </div>
+  </div>
 
-    <div id="results-container" class="hidden space-y-6">
+  <!-- Main Content Area -->
+  <div class="container mx-auto flex-1 overflow-hidden">
+    <div id="results-container" class="hidden w-full h-full grid grid-cols-12 gap-4 overflow-hidden">
 
-      <!-- Main Layout: Left side (Exec Summary & Insights), Right side (Transcript & Analysis) -->
-      <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
-
-        <!-- Left Column: Executive Summary & Insights (sticky) -->
-        <div class="xl:col-span-2 space-y-6 xl:sticky xl:top-20 self-start">
-          <div id="executive-summary" class="bg-white rounded-lg shadow p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Executive Summary</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 class="text-sm font-medium text-gray-600 mb-2">Main Concerns</h3>
-                <ul id="main-concerns" class="space-y-1"></ul>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium text-gray-600 mb-2">Critical Next Steps</h3>
-                <ul id="next-steps" class="space-y-1"></ul>
-              </div>
+      <!-- Left Column (3 cols): Executive Summary, Filters, Insights -->
+      <div class="col-span-3 flex flex-col space-y-4 overflow-auto pr-1">
+        <!-- Executive Summary -->
+        <div id="executive-summary" class="bg-white rounded-lg shadow p-4 border border-gray-100">
+          <h2 class="text-base font-semibold text-gray-800 mb-3">Executive Summary</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 class="text-sm font-medium text-gray-600 mb-1">Main Concerns</h3>
+              <ul id="main-concerns" class="space-y-1"></ul>
             </div>
-          </div>
-
-          <!-- Controls and Insights -->
-          <div class="bg-white rounded-lg shadow p-6 border border-gray-100 space-y-4">
-            <!-- Filters & View Mode -->
-            <div class="space-y-2">
-              <div class="flex items-center space-x-4">
-                <span class="text-sm font-medium text-gray-700">Show:</span>
-                <label class="text-sm font-normal text-gray-700 flex items-center space-x-1">
-                  <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
-                  <span>Conditions</span>
-                </label>
-                <label class="text-sm font-normal text-gray-700 flex items-center space-x-1">
-                  <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
-                  <span>Medications</span>
-                </label>
-                <label class="text-sm font-normal text-gray-700 flex items-center space-x-1">
-                  <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
-                  <span>Instructions</span>
-                </label>
-                <label class="text-sm font-normal text-gray-700 flex items-center space-x-1">
-                  <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
-                  <span>Follow-ups</span>
-                </label>
-              </div>
-
-              <div class="flex items-center space-x-2">
-                <span class="text-sm font-medium text-gray-700">View Mode:</span>
-                <button id="view-mode-btn" data-mode="patient" class="px-2 py-1 bg-gray-200 text-sm rounded hover:bg-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                  Patient
-                </button>
-              </div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-600 mb-1">Critical Next Steps</h3>
+              <ul id="next-steps" class="space-y-1"></ul>
             </div>
-
-            <!-- Insights -->
-            <div id="insights" class="text-sm"></div>
           </div>
         </div>
 
-        <!-- Right Column: Transcript & Analysis -->
-        <div class="xl:col-span-3 space-y-6">
-          <!-- Transcript -->
-          <div class="bg-white rounded-lg shadow p-4 border border-gray-100">
-            <h2 class="text-lg font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
-            <div id="transcript" class="h-[400px] overflow-y-auto space-y-2"></div>
-          </div>
-
-          <!-- Analysis Panels -->
-          <div class="bg-white rounded-lg shadow border border-gray-100 p-4">
-            <div class="flex space-x-4 mb-4 border-b pb-2">
-              <button class="tab-btn font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-tab="findings">Key Findings</button>
-              <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
+        <!-- Filters & Insights -->
+        <div class="bg-white rounded-lg shadow p-4 border border-gray-100 space-y-4">
+          <div class="space-y-2">
+            <div class="flex flex-wrap gap-2 items-center">
+              <span class="text-sm font-medium text-gray-700">Show:</span>
+              <label class="text-sm flex items-center space-x-1">
+                <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
+                <span>Conditions</span>
+              </label>
+              <label class="text-sm flex items-center space-x-1">
+                <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
+                <span>Medications</span>
+              </label>
+              <label class="text-sm flex items-center space-x-1">
+                <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
+                <span>Instructions</span>
+              </label>
+              <label class="text-sm flex items-center space-x-1">
+                <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
+                <span>Follow-ups</span>
+              </label>
             </div>
 
-            <div id="findings-tab" class="tab-content">
-              <div id="conditions" class="mb-6 entity-group" data-type="condition">
-                <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
-                <div class="space-y-2"></div>
-              </div>
-              <div id="medications" class="mb-6 entity-group" data-type="medication">
-                <h3 class="font-medium text-gray-700 mb-2">Medications</h3>
-                <div class="space-y-2"></div>
-              </div>
-              <div id="instructions" class="mb-6 entity-group" data-type="instruction">
-                <h3 class="font-medium text-gray-700 mb-2">Instructions</h3>
-                <div class="space-y-2"></div>
-              </div>
-              <div id="follow_ups" class="mb-6 entity-group" data-type="follow_up">
-                <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
-                <div class="space-y-2"></div>
-              </div>
-            </div>
-
-            <div id="confusions-tab" class="tab-content hidden">
-              <div id="confusion-list" class="space-y-3"></div>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-gray-700">View Mode:</span>
+              <button id="view-mode-btn" data-mode="patient" class="px-2 py-1 bg-gray-200 text-sm rounded hover:bg-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                Patient
+              </button>
             </div>
           </div>
+          <div id="insights" class="text-sm"></div>
+        </div>
+      </div>
+
+      <!-- Middle Column (5 cols): Transcript -->
+      <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
+        <h2 class="text-base font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
+        <div id="transcript" class="space-y-2"></div>
+      </div>
+
+      <!-- Right Column (4 cols): Findings & Confusions -->
+      <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
+        <div class="flex space-x-4 mb-4 border-b pb-2">
+          <button class="tab-btn font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-tab="findings">Key Findings</button>
+          <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
+        </div>
+
+        <div id="findings-tab" class="tab-content space-y-6">
+          <div id="conditions" class="mb-6 entity-group" data-type="condition">
+            <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
+            <div class="space-y-2"></div>
+          </div>
+          <div id="medications" class="mb-6 entity-group" data-type="medication">
+            <h3 class="font-medium text-gray-700 mb-2">Medications</h3>
+            <div class="space-y-2"></div>
+          </div>
+          <div id="instructions" class="mb-6 entity-group" data-type="instruction">
+            <h3 class="font-medium text-gray-700 mb-2">Instructions</h3>
+            <div class="space-y-2"></div>
+          </div>
+          <div id="follow_ups" class="mb-6 entity-group" data-type="follow_up">
+            <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
+            <div class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div id="confusions-tab" class="tab-content hidden space-y-3">
+          <div id="confusion-list" class="space-y-3"></div>
         </div>
       </div>
     </div>

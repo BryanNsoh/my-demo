@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         entities: []
     };
 
-    // Tab switching
     ui.tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             ui.tabBtns.forEach(b => b.classList.remove('border-blue-600', 'border-b-2', 'text-gray-800'));
@@ -68,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.viewModeBtn.setAttribute('data-mode', newMode);
         ui.viewModeBtn.textContent = newMode.charAt(0).toUpperCase() + newMode.slice(1);
         globalData.currentViewMode = newMode;
-        renderEntities(globalData.entities); // re-render with new mode
+        renderEntities(globalData.entities);
         applyFilters();
     });
 
@@ -85,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderConfusions(analysis.highlighted_confusions);
         renderInsights(globalData.entities);
 
-        // Default to findings tab
         ui.tabBtns.forEach(b => b.classList.remove('border-b-2', 'border-blue-600', 'text-gray-800'));
         document.querySelector('[data-tab="findings"]').classList.add('border-b-2', 'border-blue-600', 'text-gray-800');
         document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
@@ -95,8 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderExecutiveSummary(summary) {
-        ui.mainConcerns.innerHTML = summary.main_concerns.map(c => `<li class="text-sm text-gray-700 leading-tight">${c}</li>`).join('');
-        ui.nextSteps.innerHTML = summary.critical_next_steps.map(s => `<li class="text-sm text-gray-700 leading-tight">${s}</li>`).join('');
+        ui.mainConcerns.innerHTML = summary.main_concerns
+            .map(c => `<li class="text-sm text-gray-700 leading-tight">${c}</li>`)
+            .join('');
+        ui.nextSteps.innerHTML = summary.critical_next_steps
+            .map(s => `<li class="text-sm text-gray-700 leading-tight">${s}</li>`)
+            .join('');
     }
 
     function renderTranscript(lines) {
