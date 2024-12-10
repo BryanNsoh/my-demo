@@ -1,8 +1,10 @@
+# app/main.py
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from app.analyzer.pipeline import (
     process_conversation,
     read_conversation_text,
     DEFAULT_MODEL,
+    DATA_DIR,
 )
 import asyncio
 import os
@@ -16,8 +18,28 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route("/")
 def index():
-    # Landing page: user chooses conversation_id, model, inputs either text or audio
-    return render_template("index.html", models=[DEFAULT_MODEL])
+    # Get all txt files in data directory
+    transcript_files = [
+        f.stem for f in DATA_DIR.glob("*.txt") if not f.stem.endswith("_analysis")
+    ]
+    transcript_files = sorted(set(transcript_files))
+
+    # For each transcript, check if analysis exists
+    transcripts_info = []
+    for transcript_id in transcript_files:
+        analysis_path = DATA_DIR / f"{transcript_id}_analysis.json"
+        has_analysis = analysis_path.exists()
+        transcripts_info.append(
+            {
+                "id": transcript_id,
+                "has_analysis": has_analysis,
+                "text": read_conversation_text(transcript_id)[:200] + "...",
+            }
+        )
+
+    return render_template(
+        "index.html", models=[DEFAULT_MODEL], transcripts=transcripts_info
+    )
 
 
 @app.route("/upload_and_analyze", methods=["POST"])
@@ -46,32 +68,38 @@ def upload_and_analyze():
     else:
         return "Invalid input type", 400
 
-    # Run the analysis pipeline
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    result = loop.run_until_complete(process_conversation(conversation_id, model_name))
-
-    if "error" in result:
-        return f"Error: {result['error']}", 500
-
-    # Save analysis results to a JSON file for retrieval by /results/<conversation_id>
-    analysis_path = os.path.join(UPLOAD_FOLDER, conversation_id + "_analysis.json")
-    with open(analysis_path, "w", encoding="utf-8") as f:
-        json.dump(
-            {"analysis": result, "transcript": read_conversation_text(conversation_id)},
-            f,
-            indent=2,
-        )
-
     return redirect(url_for("results", conversation_id=conversation_id))
 
 
 @app.route("/results/<conversation_id>")
 def results(conversation_id):
     analysis_path = os.path.join(UPLOAD_FOLDER, conversation_id + "_analysis.json")
-    if not os.path.exists(analysis_path):
-        return f"No analysis found for {conversation_id}", 404
 
+    # If analysis doesn't exist, create it
+    if not os.path.exists(analysis_path):
+        # Run the analysis pipeline
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(
+            process_conversation(conversation_id, DEFAULT_MODEL)
+        )
+        loop.close()
+
+        if "error" in result:
+            return f"Error during analysis: {result['error']}", 500
+
+        # Save analysis results
+        with open(analysis_path, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "analysis": result,
+                    "transcript": read_conversation_text(conversation_id),
+                },
+                f,
+                indent=2,
+            )
+
+    # Read and return analysis results
     with open(analysis_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     analysis = data["analysis"]

@@ -1,3 +1,4 @@
+<!-- app/templates/results.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,6 +58,26 @@
         <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
         <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="clinician">Clinician Insights</button>
       </div>
+
+      <!-- Filter Checkboxes -->
+      <div class="flex space-x-4 mb-2">
+        <label class="inline-flex items-center">
+          <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
+          <span class="ml-2">Conditions</span>
+        </label>
+        <label class="inline-flex items-center">
+          <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
+          <span class="ml-2">Medications</span>
+        </label>
+        <label class="inline-flex items-center">
+          <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
+          <span class="ml-2">Instructions</span>
+        </label>
+        <label class="inline-flex items-center">
+          <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
+          <span class="ml-2">Follow-ups</span>
+        </label>
+      </div>
       
       <div id="findings-tab" class="tab-content space-y-6">
         <div id="conditions" class="mb-6 entity-group" data-type="condition">
@@ -92,7 +113,6 @@
 const analysis = {{ analysis|tojson }};
 const transcript = {{ transcript|tojson }};
 
-// The JavaScript code is basically the same as before but simplified to just display results
 document.addEventListener('DOMContentLoaded', () => {
     const ui = {
         tabBtns: document.querySelectorAll('.tab-btn'),
@@ -102,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         confusionList: document.getElementById('confusion-list'),
         insightsEl: document.getElementById('insights'),
         clinicianInsightsEl: document.getElementById('clinician-insights'),
+        filterCheckboxes: document.querySelectorAll('.filter-checkbox')
     };
 
     let globalData = {
@@ -121,13 +142,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    renderExecutiveSummary(analysis.summary);
-    const highlightedTranscript = highlightTranscript(globalData.transcriptLines, globalData.entities);
-    renderTranscript(highlightedTranscript);
-    renderEntities(globalData.entities);
-    renderConfusions(analysis.highlighted_confusions);
-    renderInsights(globalData.entities);
-    renderClinicianInsights(analysis.clinician_insights);
+    // Apply filters
+    ui.filterCheckboxes.forEach(cb => {
+        cb.addEventListener('change', applyFilters);
+    });
+
+    function applyFilters() {
+        const filters = {};
+        ui.filterCheckboxes.forEach(cb => {
+            filters[cb.dataset.type] = cb.checked;
+        });
+
+        document.querySelectorAll('.entity-group').forEach(g => {
+            const t = g.getAttribute('data-type');
+            g.style.display = filters[t] ? '' : 'none';
+        });
+    }
 
     function renderExecutiveSummary(summary) {
         ui.mainConcerns.innerHTML = summary.main_concerns
@@ -140,8 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTranscript(lines) {
         ui.transcriptEl.innerHTML = lines.map((turn, i) => `
-        <div class="turn p-2 rounded hover:bg-gray-50" data-turn="${i}">${turn}</div>
-      `).join('');
+            <div class="turn p-2 rounded hover:bg-gray-50" data-turn="${i}">${turn}</div>
+        `).join('');
     }
 
     function renderEntities(entities) {
@@ -160,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function entityCard(e) {
         const turns = e.related_turns.join(',');
         const displayText = e.patient_explanation || e.text || '(No explanation)';
+        
         return `
         <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer relative"
           onclick="highlightTurns('${turns}')">
@@ -171,9 +202,30 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <p class="text-sm text-gray-600 line-clamp-2">${displayText}</p>
             </div>
+            <button class="text-blue-600 text-xs hover:text-blue-700 focus:outline-none"
+              onclick="event.stopPropagation();toggleMoreInfo(this)">More info</button>
+          </div>
+          <div class="more-info hidden mt-3 pt-3 border-t border-gray-100">
+            ${moreInfoContent(e)}
           </div>
         </div>
-      `;
+        `;
+    }
+
+    window.toggleMoreInfo = function(btn) {
+        const parent = btn.closest('.p-4');
+        const moreInfo = parent.querySelector('.more-info');
+        moreInfo.classList.toggle('hidden');
+    };
+
+    function moreInfoContent(e) {
+        let info = `<div class="space-y-1 text-xs text-gray-700">`;
+        info += `<div><strong>Type:</strong> ${e.type}</div>`;
+        if (e.dosage) info += `<div><strong>Dosage:</strong> ${e.dosage}</div>`;
+        if (e.first_mention_turn !== null) info += `<div><strong>First Mention Turn:</strong> ${e.first_mention_turn}</div>`;
+        if (e.needs_clarification) info += `<div class="text-amber-600">Needs clarification</div>`;
+        info += `</div>`;
+        return info;
     }
 
     function getTypeColor(type) {
@@ -188,8 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderConfusions(confusions) {
         ui.confusionList.innerHTML = confusions.map(c => `
-        <div class="p-2 bg-amber-50 rounded text-sm">${c}</div>
-      `).join('');
+            <div class="p-2 bg-amber-50 rounded text-sm">${c}</div>
+        `).join('');
     }
 
     function renderInsights(entities) {
@@ -197,17 +249,23 @@ document.addEventListener('DOMContentLoaded', () => {
         entities.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
 
         ui.insightsEl.innerHTML = `
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-gray-700">Aggregate Insights:</div>
-          <div>Conditions: ${counts.condition}</div>
-          <div>Medications: ${counts.medication}</div>
-          <div>Instructions: ${counts.instruction}</div>
-          <div>Follow-ups: ${counts.follow_up}</div>
-        </div>
-      `;
+            <div class="space-y-2">
+              <div class="text-sm font-medium text-gray-700">Aggregate Insights:</div>
+              <div>Conditions: ${counts.condition}</div>
+              <div>Medications: ${counts.medication}</div>
+              <div>Instructions: ${counts.instruction}</div>
+              <div>Follow-ups: ${counts.follow_up}</div>
+            </div>
+        `;
     }
 
-    window.highlightTurns = function (turns) {
+    function renderClinicianInsights(insights) {
+        ui.clinicianInsightsEl.innerHTML = insights.map(
+            insight => `<li class="leading-tight list-item list-disc ml-4">${insight}</li>`
+        ).join('');
+    }
+
+    window.highlightTurns = function(turns) {
         document.querySelectorAll('.turn.highlighted').forEach(el => {
             el.classList.remove('bg-blue-100', 'highlighted');
         });
@@ -248,6 +306,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return highlightedLine;
         });
     }
+
+    // Initialize everything
+    renderExecutiveSummary(analysis.summary);
+    const highlightedTranscript = highlightTranscript(globalData.transcriptLines, globalData.entities);
+    renderTranscript(highlightedTranscript);
+    renderEntities(globalData.entities);
+    renderConfusions(analysis.highlighted_confusions);
+    renderInsights(globalData.entities);
+    renderClinicianInsights(analysis.clinician_insights);
+    applyFilters();
 });
 </script>
 </body>

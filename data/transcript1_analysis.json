@@ -1,0 +1,112 @@
+{
+  "analysis": {
+    "conversation_id": "transcript1",
+    "summary": {
+      "main_concerns": [
+        "it's more of a pressure. In my right side.",
+        "some nausea that day.",
+        "Sometimes I feel a little, uh, full. Bloated, like she said."
+      ],
+      "critical_next_steps": [
+        "can we get an EKG and some blood work? We'll want to check those levels. And let's get an abdominal series as well."
+      ]
+    },
+    "entities": [
+      {
+        "type": "condition",
+        "name": "side pain",
+        "dosage": null,
+        "text": "it's more of a pressure. In my right side.",
+        "first_mention_turn": 9,
+        "patient_explanation": "It feels like pressure, like a heavy... When I bend over, mostly.",
+        "related_turns": [
+          9
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "condition",
+        "name": "nausea",
+        "dosage": null,
+        "text": "some nausea that day.",
+        "first_mention_turn": 16,
+        "patient_explanation": "I actually had some nausea that day.",
+        "related_turns": [
+          16
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "condition",
+        "name": "bloating",
+        "dosage": null,
+        "text": "Sometimes I feel a little, uh, full. Bloated, like she said.",
+        "first_mention_turn": 35,
+        "patient_explanation": "It's like feeling full or bloated sometimes.",
+        "related_turns": [
+          35
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "condition",
+        "name": "diarrhea",
+        "dosage": null,
+        "text": "she did have some diarrrea...",
+        "first_mention_turn": 38,
+        "patient_explanation": "Just once! That was just the once. I think it was something I ate.",
+        "related_turns": [
+          38
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "medication",
+        "name": "Yellow pill",
+        "dosage": null,
+        "text": "that yellow pill... For my levels.",
+        "first_mention_turn": 18,
+        "patient_explanation": "To keep my numbers steady.",
+        "related_turns": [
+          18
+        ],
+        "needs_clarification": true
+      },
+      {
+        "type": "instruction",
+        "name": "avoid salty foods",
+        "dosage": null,
+        "text": "avoiding the salty foods? Like the doctor said?",
+        "first_mention_turn": 28,
+        "patient_explanation": "Yes. Since last month. No more, um... what is it? No more of those salty chips.",
+        "related_turns": [
+          28
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "follow_up",
+        "name": "get EKG, blood work, abdominal series",
+        "dosage": null,
+        "text": "can we get an EKG and some blood work? We'll want to check those levels. And let's get an abdominal series as well.",
+        "first_mention_turn": 30,
+        "patient_explanation": "We'll try to get to the bottom of it.",
+        "related_turns": [
+          30
+        ],
+        "needs_clarification": false
+      }
+    ],
+    "highlighted_confusions": [
+      "DAUGHTER: (On phone) ...I don't know, she says it's like a pressure... Yeah, she's at the hospital now... (To Patient) Mom, it's Cousin Carol. She wants to know if you've been avoiding the salty foods? Like the doctor said?"
+    ],
+    "clinician_insights": [
+      "Possible conditions include abdominal issues, possibly related to the pressure on the right side and occasional nausea.",
+      "Medication adherence may be a concern regarding the yellow pill for her levels; confirm specific medication and its purpose.",
+      "Key lifestyle factors: gardening activities may aggravate her condition; inquire about physical activity levels.",
+      "Next diagnostic steps include EKG, blood work, and abdominal series to investigate current symptoms.",
+      "Monitor for changes in bowel habits or any signs of worsening symptoms, such as persistent nausea or pain."
+    ]
+  },
+  "transcript": "Transcript:\n\n\n\n(Sounds of beeping monitors, muffled voices, a PA announcement about a code blue in room 3)\n\n\n\nPATIENT (Ms. Thompson): ...hurts...acting up again...\n\n\n\nDAUGHTER: Mom, tell the doctor, like you told me.\n\n\n\nDOCTOR: Okay, Ms. Thompson? Can you tell me what's wrong?\n\n\n\nPATIENT: My side...it's, uh, it started, like last time. Just like last time.\n\n\n\nDOCTOR: And when was last time, can you remind me?\n\n\n\nPATIENT: Oh, um...when was it, honey?\n\n\n\nDAUGHTER: Don't you remember, Mom? After your, uh, spin class thing?\n\n\n\nPATIENT: No, no, that was different. That was my legs. My legs hurt, remember? After that, exercise class. This is... it's more of a pressure. In my right side.\n\n\n\nDOCTOR: Okay. Your right side. And it feels like pressure?\n\n\n\nPATIENT: Yes, like a... like a heavy... When I bend over, mostly. Like in my garden. Gardening, you know.\n\n\n\nDAUGHTER: She's been doing a lot in her garden lately.\n\n\n\nNURSE: (Entering) Doctor, I have her chart here. Ms. Thompson, I see you were here three months ago. It says here that was during the bake sale. At your church?\n\n\n\nPATIENT: Oh, yes. But that time it was... I was dizzy. Not pain. This is pain.\n\n\n\nDOCTOR: I see a similar complaint here in February.\n\n\n\nPATIENT: February? Oh, right... Yeah, I remember that day. It was cold, wasn't it? Cold that day. Actually I had some nausea that day. Too. Some nausea, in february.\n\n\n\nDOCTOR: Okay. Are you on any new medications, Ms. Thompson?\n\n\n\nPATIENT: Um... I've been taking that, uh... that yellow pill. You know, the one the doctor, at my clinic? Gave me. For my levels.\n\n\n\nDOCTOR: Your levels?\n\n\n\nPATIENT: You know, to keep them... even.\n\n\n\nDAUGHTER: It's the one, um, your primary doctor said? To keep your numbers steady, Mom?\n\n\n\nDOCTOR: Okay, so a yellow pill for your numbers. Do you know what your numbers were, that they were trying to keep steady?\n\n\n\nPATIENT: No, not exactly. Just... numbers.\n\n\n\nDOCTOR: Alright. And this pain, or pressure, is it constant?\n\n\n\nPATIENT: No, not all the time. It comes and goes. Like a twinge. Sometimes a heavy twinge, you know?\n\n\n\nDOCTOR: Does anything make it better or worse?\n\n\n\nPATIENT: Well, like I said, when I bend. When I lean forward. It's worse. Like at work I sit all day so I don't notice it so much. It is worse when I stand or bend.\n\n\n\nDAUGHTER: (On phone) ...I don't know, she says it's like a pressure... Yeah, she's at the hospital now... (To Patient) Mom, it's Cousin Carol. She wants to know if you've been avoiding the salty foods? Like the doctor said?\n\n\n\nPATIENT: Oh, yes. Since last month. No more, um... what is it? No more of those salty chips.\n\n\n\nDOCTOR: Okay, Ms. Thompson. Nurse, can you get a full set of vitals, and can we get an EKG and some blood work? We'll want to check those levels. And let's get an abdominal series as well.\n\n\n\nNURSE: Sure thing, doctor.\n\n\n\nDOCTOR: So you said the pain is worse with bending. Any other movements that make it worse?\n\n\n\nPATIENT: Hmm, not really. Just, you know, when I'm active.\n\n\n\nDAUGHTER: Mom, you forgot to tell him about the bloating!\n\n\n\nPATIENT: Oh, yeah. Sometimes I feel a little, uh, full. Bloated, like she said.\n\n\n\nDOCTOR: Okay. And have you had any changes in your bowel movements?\n\n\n\nPATIENT: No, not really. Regular, you know.\n\n\n\nDAUGHTER: She did have some diarrea... diarr... loose stools a couple days ago.\n\n\n\nPATIENT: Just once! That was just the once. I think it was something I ate.\n\n\n\nDOCTOR: Okay. We'll get those tests, Ms. Thompson, and we'll see what they show. It could be a number of things. We'll try to get to the bottom of it.\n\n\n\nDAUGHTER: She gets really bad heartburn too, doctor.\n\n\n\nPATIENT: That's just sometimes, it's not related.\n\n\n\nDOCTOR: Heartburn, okay. We'll take that into account as well.\n\n\n\nNURSE: Vitals are... blood pressure 150 over 90. Heart rate 92. Resper... resp... breathing is 18. Temperature 98.9.\n\n\n\nDOCTOR: Okay, thanks. Ms. Thompson we're going to run those tests, and I'll be back to check on you as soon as we have some results.\n\n\n\n(Sounds of machines beeping, more muffled voices)\n\nPATIENT: Okay. Thank you.\n\n\n\nDAUGHTER: Thank you, Doctor.\n\nDOCTOR: We're just gonna try and figure out what's causing this okay?\n\nPATIENT: okay.\n\n\n\n(End of Transcript Segment)"
+}
