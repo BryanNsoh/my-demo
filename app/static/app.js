@@ -9,8 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
         transcriptEl: document.getElementById('transcript'),
         confusionList: document.getElementById('confusion-list'),
         tabBtns: document.querySelectorAll('.tab-btn'),
+        filterCheckboxes: document.querySelectorAll('.filter-checkbox'),
+        viewModeBtn: document.getElementById('view-mode-btn'),
+        insightsEl: document.getElementById('insights')
     };
 
+    let globalData = {
+        analysis: null,
+        transcriptLines: [],
+        currentViewMode: 'patient',
+        entities: []
+    };
+
+    // Tab switching
     ui.tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             ui.tabBtns.forEach(b => b.classList.remove('border-b-2', 'border-blue-600'));
@@ -36,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             if (data.error) throw new Error(data.error);
 
+            globalData.analysis = data.analysis;
             renderResults(data);
             ui.loading.classList.add('hidden');
             ui.resultsContainer.classList.remove('hidden');
@@ -46,18 +58,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    ui.filterCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            applyFilters();
+        });
+    });
+
+    ui.viewModeBtn.addEventListener('click', () => {
+        const current = ui.viewModeBtn.getAttribute('data-mode');
+        const newMode = current === 'patient' ? 'clinician' : 'patient';
+        ui.viewModeBtn.setAttribute('data-mode', newMode);
+        ui.viewModeBtn.textContent = newMode.charAt(0).toUpperCase() + newMode.slice(1);
+        globalData.currentViewMode = newMode;
+        renderEntities(globalData.entities); // re-render with new mode
+        applyFilters();
+    });
+
     function renderResults(data) {
         const { analysis, transcript } = data;
         renderExecutiveSummary(analysis.summary);
-        renderTranscript(transcript);
-        renderEntities(analysis.entities);
+        globalData.entities = analysis.entities;
+        globalData.transcriptLines = transcript.split('\n').filter(l => l.trim());
+
+        const highlightedTranscript = highlightTranscript(globalData.transcriptLines, globalData.entities);
+        renderTranscript(highlightedTranscript);
+
+        renderEntities(globalData.entities);
         renderConfusions(analysis.highlighted_confusions);
+        renderInsights(globalData.entities);
 
         // Default to findings tab
         ui.tabBtns.forEach(b => b.classList.remove('border-b-2', 'border-blue-600'));
         document.querySelector('[data-tab="findings"]').classList.add('border-b-2', 'border-blue-600');
         document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
         document.getElementById('findings-tab').classList.remove('hidden');
+
+        applyFilters();
     }
 
     function renderExecutiveSummary(summary) {
@@ -65,9 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.nextSteps.innerHTML = summary.critical_next_steps.map(s => `<li>${s}</li>`).join('');
     }
 
-    function renderTranscript(text) {
-        const turns = text.split('\n').filter(l => l.trim());
-        ui.transcriptEl.innerHTML = turns.map((turn, i) => `
+    function renderTranscript(lines) {
+        ui.transcriptEl.innerHTML = lines.map((turn, i) => `
         <div class="turn p-2" data-turn="${i}">${turn}</div>
       `).join('');
     }
@@ -78,23 +113,56 @@ document.addEventListener('DOMContentLoaded', () => {
             grouped[e.type].push(e);
         });
 
-        Object.entries(grouped).forEach(([type, ents]) => {
+        for (const [type, ents] of Object.entries(grouped)) {
             const container = document.querySelector(`#${type}s .space-y-2`);
-            if (!container) return;
-            container.innerHTML = ents.map(e => entityCard(e)).join('');
-        });
+            if (!container) continue;
+            container.innerHTML = ents.map(e => entityCard(e, globalData.currentViewMode)).join('');
+        }
     }
 
-    function entityCard(e) {
+    function entityCard(e, viewMode) {
         const turns = e.related_turns.join(',');
+        const displayText = viewMode === 'patient'
+            ? (e.patient_explanation || e.text || '(No explanation)')
+            : entityClinicianText(e);
+
         return `
-        <div class="p-2 bg-white border rounded hover:bg-gray-50 cursor-pointer"
+        <div class="p-2 bg-white border rounded hover:bg-gray-50 cursor-pointer relative"
           onclick="highlightTurns('${turns}')">
-          <div class="font-medium text-sm">${e.text || '(No text provided)'}</div>
-          ${e.patient_explanation ? `<div class="text-xs text-gray-600">${e.patient_explanation}</div>` : ''}
-          ${e.needs_clarification ? `<div class="text-xs text-amber-600">Needs clarification</div>` : ''}
+          <div class="font-medium text-sm">${e.text || '(No text)'} 
+            <span class="text-xs text-gray-500">(${e.type})</span>
+          </div>
+          <div class="text-xs text-gray-600 mt-1">${displayText}</div>
+  
+          <div class="absolute top-2 right-2">
+            <button class="text-xs text-blue-600 underline" onclick="event.stopPropagation();toggleMoreInfo(this)">More info</button>
+          </div>
+          <div class="more-info hidden mt-2 text-xs text-gray-700">
+            ${moreInfoContent(e)}
+          </div>
         </div>
       `;
+    }
+
+    function moreInfoContent(e) {
+        return `
+        <div><strong>Type:</strong> ${e.type}</div>
+        ${e.dosage ? `<div><strong>Dosage:</strong> ${e.dosage}</div>` : ''}
+        ${e.first_mention_turn !== null ? `<div><strong>First Mention Turn:</strong> ${e.first_mention_turn}</div>` : ''}
+        ${e.needs_clarification ? `<div class="text-amber-600">Needs clarification</div>` : ''}
+      `;
+    }
+
+    window.toggleMoreInfo = function (btn) {
+        const parent = btn.closest('.p-2');
+        const moreInfo = parent.querySelector('.more-info');
+        moreInfo.classList.toggle('hidden');
+    };
+
+    function entityClinicianText(e) {
+        let msg = e.text || '(No text)';
+        if (e.needs_clarification) msg += ' [Check clarification]';
+        return msg;
     }
 
     function renderConfusions(confusions) {
@@ -103,7 +171,33 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
 
-    // Global function to highlight turns
+    function renderInsights(entities) {
+        const counts = { condition: 0, medication: 0, instruction: 0, follow_up: 0 };
+        entities.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
+
+        ui.insightsEl.innerHTML = `
+        <div class="font-medium mb-2">Aggregate Insights:</div>
+        <div class="space-y-1">
+          <div>Conditions: ${counts.condition}</div>
+          <div>Medications: ${counts.medication}</div>
+          <div>Instructions: ${counts.instruction}</div>
+          <div>Follow-ups: ${counts.follow_up}</div>
+        </div>
+      `;
+    }
+
+    function applyFilters() {
+        const filters = {};
+        ui.filterCheckboxes.forEach(cb => {
+            filters[cb.dataset.type] = cb.checked;
+        });
+
+        document.querySelectorAll('.entity-group').forEach(g => {
+            const t = g.getAttribute('data-type');
+            g.style.display = filters[t] ? '' : 'none';
+        });
+    }
+
     window.highlightTurns = function (turns) {
         document.querySelectorAll('.turn.highlighted').forEach(el => {
             el.classList.remove('bg-blue-100', 'highlighted');
@@ -117,4 +211,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    function highlightTranscript(lines, entities) {
+        const byTurn = {};
+        entities.forEach(e => {
+            if (e.first_mention_turn !== null && e.text) {
+                byTurn[e.first_mention_turn] = byTurn[e.first_mention_turn] || [];
+                byTurn[e.first_mention_turn].push(e);
+            }
+        });
+
+        const result = lines.map((line, i) => {
+            if (!byTurn[i]) return line;
+            let highlightedLine = line;
+            for (const ent of byTurn[i]) {
+                const { text, patient_explanation } = ent;
+                if (!text) continue;
+                const idx = highlightedLine.toLowerCase().indexOf(text.toLowerCase());
+                if (idx >= 0) {
+                    const before = highlightedLine.slice(0, idx);
+                    const match = highlightedLine.slice(idx, idx + text.length);
+                    const after = highlightedLine.slice(idx + text.length);
+                    const tooltip = patient_explanation || text;
+                    highlightedLine = `${before}<span class="entity-inline" title="${tooltip}">${match}</span>${after}`;
+                }
+            }
+            return highlightedLine;
+        });
+
+        return result;
+    }
 });
