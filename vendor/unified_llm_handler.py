@@ -38,9 +38,9 @@ class BatchMetadata(BaseModel):
     status: str
     created_at: datetime
     last_updated: datetime
-    num_requests: int
     error: Optional[str] = None
     output_file_path: Optional[str] = None
+    num_requests: int
 
 
 class BatchResult(BaseModel):
@@ -81,6 +81,11 @@ class UnifiedResponse(BaseModel, Generic[T]):
     data: Optional[Union[T, List[T], BatchResult]] = None
     error: Optional[str] = None
     original_prompt: Optional[str] = None
+
+
+class CityLocation(BaseModel):
+    city: str
+    country: str
 
 
 class UnifiedLLMHandler:
@@ -429,6 +434,18 @@ async def run_tests():
             else invalid_prompt_result.data.model_dump(mode="python")
         ),
     )
+
+    # Test 7: Ollama model integration
+    # This test verifies the ollama:llama3.2 model works as expected.
+    ollama_result = await handler.process(
+        "Where the Olympics held in 2012?", "ollama:llama3.2", CityLocation
+    )
+    print("\nTest 7 (Ollama Model):")
+    print("Success?", ollama_result.success)
+    if ollama_result.success and ollama_result.data:
+        print("Data:", ollama_result.data.model_dump(mode="python"))
+    else:
+        print("Error:", ollama_result.error)
 
 
 if __name__ == "__main__":

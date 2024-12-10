@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const ui = {
         select: document.getElementById('conversation-select'),
+        modelSelect: document.getElementById('model-select'),
         analyzeBtn: document.getElementById('analyze-btn'),
         loading: document.getElementById('loading'),
         resultsContainer: document.getElementById('results-container'),
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ui.analyzeBtn.addEventListener('click', async () => {
         const conversationId = ui.select.value;
+        const modelName = ui.modelSelect.value;
         ui.loading.classList.remove('hidden');
         ui.resultsContainer.classList.add('hidden');
 
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ conversation_id: conversationId })
+                body: JSON.stringify({ conversation_id: conversationId, model_name: modelName })
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);

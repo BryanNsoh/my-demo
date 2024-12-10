@@ -11,8 +11,10 @@ from app.analyzer.models import (
 )
 from vendor.unified_llm_handler import UnifiedLLMHandler, UnifiedResponse
 
+# Global default model name. User can change it here if desired.
+DEFAULT_MODEL = "gpt-4o-mini"
+
 DATA_DIR = Path("data")
-CACHE_DIR = Path("cache")
 
 
 def read_conversation_text(conversation_id: str) -> str:
@@ -27,32 +29,8 @@ def split_into_turns(conversation_text: str) -> list:
     return lines
 
 
-def load_from_cache(conversation_id: str) -> Optional[dict]:
-    cache_file = CACHE_DIR / f"{conversation_id}.json"
-    if cache_file.exists():
-        try:
-            with cache_file.open("r") as f:
-                return json.load(f)
-        except json.JSONDecodeError:
-            pass
-    return None
-
-
-def save_to_cache(conversation_id: str, data):
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    cache_file = CACHE_DIR / f"{conversation_id}.json"
-    if hasattr(data, "model_dump"):
-        data = data.model_dump(mode="json")
-    with cache_file.open("w") as f:
-        json.dump(data, f, indent=2)
-
-
-def get_transcript_hash(conversation_text: str) -> str:
-    return hashlib.sha256(conversation_text.encode("utf-8")).hexdigest()
-
-
 async def run_llm_extraction(
-    conversation_id: str, turns: list
+    conversation_id: str, turns: list, model_name: str
 ) -> UnifiedResponse[LLMTermExtractionResponse]:
     handler = UnifiedLLMHandler()
     schema = LLMTermExtractionResponse.model_json_schema()
@@ -88,15 +66,16 @@ Return EXACT JSON per schema:
 {turns_str}
 --- END OF CONVERSATION ---
 """
-
+    # print prompt
+    print(prompt)
     result = await handler.process(
-        prompts=prompt, model="gpt-4o-mini", response_type=LLMTermExtractionResponse
+        prompts=prompt, model=model_name, response_type=LLMTermExtractionResponse
     )
     return result
 
 
 async def run_llm_clinician_insights(
-    conversation_id: str, turns: list, entities: list
+    conversation_id: str, turns: list, entities: list, model_name: str
 ) -> list:
     handler = UnifiedLLMHandler()
 
@@ -137,7 +116,7 @@ Be specific, interpretive, and medically relevant, not just repetition of the tr
 
     insight_result = await handler.process(
         prompts=prompt,
-        model="gpt-4o-mini",
+        model=model_name,
         response_type=ClinicianInsightsResponse,
     )
 
@@ -147,17 +126,12 @@ Be specific, interpretive, and medically relevant, not just repetition of the tr
         return []
 
 
-async def process_conversation(conversation_id: str) -> dict:
+async def process_conversation(conversation_id: str, model_name: str) -> dict:
     convo_text = read_conversation_text(conversation_id)
-    new_hash = get_transcript_hash(convo_text)
-    cached_result = load_from_cache(conversation_id)
-
-    if cached_result is not None and cached_result.get("transcript_hash") == new_hash:
-        return cached_result
-
     turns = split_into_turns(convo_text)
     try:
-        llm_resp = await run_llm_extraction(conversation_id, turns)
+        # Always run LLM extraction fresh, no caching
+        llm_resp = await run_llm_extraction(conversation_id, turns, model_name)
         if not llm_resp.success:
             return {
                 "conversation_id": conversation_id,
@@ -171,7 +145,9 @@ async def process_conversation(conversation_id: str) -> dict:
 
         summary = generate_executive_summary(entities)
         confusions = identify_confusions(turns)
-        insights = await run_llm_clinician_insights(conversation_id, turns, entities)
+        insights = await run_llm_clinician_insights(
+            conversation_id, turns, entities, model_name
+        )
 
         final_result = ConversationAnalysis(
             conversation_id=conversation_id,
@@ -181,8 +157,6 @@ async def process_conversation(conversation_id: str) -> dict:
             clinician_insights=insights,
         ).model_dump(mode="json")
 
-        final_result["transcript_hash"] = new_hash
-        save_to_cache(conversation_id, final_result)
         return final_result
 
     except Exception as e:
