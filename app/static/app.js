@@ -12,7 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
         tabBtns: document.querySelectorAll('.tab-btn'),
         filterCheckboxes: document.querySelectorAll('.filter-checkbox'),
         insightsEl: document.getElementById('insights'),
-        clinicianInsightsEl: document.getElementById('clinician-insights')
+        clinicianInsightsEl: document.getElementById('clinician-insights'),
+
+        // New elements for upload
+        uploadAudioBtn: document.getElementById('upload-audio-btn'),
+        audioConversationId: document.getElementById('audio-conversation-id'),
+        audioFile: document.getElementById('audio-file'),
+
+        uploadTextBtn: document.getElementById('upload-text-btn'),
+        textConversationId: document.getElementById('text-conversation-id'),
+        textInput: document.getElementById('text-input')
     };
 
     let globalData = {
@@ -21,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entities: []
     };
 
+    // Handle tab switching
     ui.tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             ui.tabBtns.forEach(b => b.classList.remove('border-blue-600', 'border-b-2', 'text-gray-800'));
@@ -32,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Handle analyze
     ui.analyzeBtn.addEventListener('click', async () => {
         const conversationId = ui.select.value;
         const modelName = ui.modelSelect.value;
@@ -60,6 +71,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ui.filterCheckboxes.forEach(cb => {
         cb.addEventListener('change', applyFilters);
+    });
+
+    // Handle audio upload
+    ui.uploadAudioBtn.addEventListener('click', async () => {
+        const convId = ui.audioConversationId.value.trim();
+        const file = ui.audioFile.files[0];
+        if (!convId || !file) {
+            alert("Please provide a conversation ID and select an audio file.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('conversation_id', convId);
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/upload_audio', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.error) {
+                alert("Error uploading audio: " + data.error);
+            } else {
+                alert("Audio uploaded successfully! Refresh the page to see the conversation in the dropdown.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error: " + e.message);
+        }
+    });
+
+    // Handle text upload
+    ui.uploadTextBtn.addEventListener('click', async () => {
+        const convId = ui.textConversationId.value.trim();
+        const text = ui.textInput.value.trim();
+        if (!convId || !text) {
+            alert("Please provide a conversation ID and paste some text.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/upload_text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conversation_id: convId, text })
+            });
+            const data = await res.json();
+            if (data.error) {
+                alert("Error uploading text: " + data.error);
+            } else {
+                alert("Text uploaded successfully! Refresh the page to see the conversation in the dropdown.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error: " + e.message);
+        }
     });
 
     function renderResults(data) {
@@ -143,6 +211,12 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
+    window.toggleMoreInfo = function (btn) {
+        const parent = btn.closest('.p-4');
+        const moreInfo = parent.querySelector('.more-info');
+        moreInfo.classList.toggle('hidden');
+    };
+
     function moreInfoContent(e) {
         let info = `<div class="space-y-1 text-xs text-gray-700">`;
         info += `<div><strong>Type:</strong> ${e.type}</div>`;
@@ -152,12 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
         info += `</div>`;
         return info;
     }
-
-    window.toggleMoreInfo = function (btn) {
-        const parent = btn.closest('.p-4');
-        const moreInfo = parent.querySelector('.more-info');
-        moreInfo.classList.toggle('hidden');
-    };
 
     function getTypeColor(type) {
         const colors = {

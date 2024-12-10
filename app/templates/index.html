@@ -2,143 +2,80 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Medical Conversation Analysis</title>
+<title>Conversation Analysis - Upload</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>
-  .highlighted { background-color: #bfdbfe; }
-  .entity-inline {
-    background-color: #dbeafe;
-    border-bottom: 1px dotted #1e3a8a;
-    cursor: help;
-  }
-  .more-info {
-    transition: max-height 0.3s ease;
-    overflow: hidden;
-  }
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
-</style>
 </head>
-<body class="h-screen bg-gray-50 text-sm text-gray-800 flex flex-col">
+<body class="bg-gray-50 min-h-screen p-6 text-gray-800">
+  <div class="max-w-lg mx-auto p-4 bg-white rounded shadow space-y-6">
+    <h1 class="text-xl font-semibold">Upload & Analyze a Conversation</h1>
+    <p class="text-sm text-gray-600">
+      Provide a unique Conversation ID (e.g., "my-convo-1"), select a model, and either paste your transcript text or upload an audio file.
+      After clicking "Upload & Analyze", the system will process and take you to the results page.
+    </p>
 
-  <div class="container mx-auto p-4 flex-none">
-    <div class="flex items-center space-x-4 mb-4">
-      <select id="conversation-select" class="p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
-        {% for convo in conversations %}
-          <option value="{{ convo }}">{{ convo }}</option>
-        {% endfor %}
-      </select>
-      <select id="model-select" class="p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
-        {% for m in models %}
+    <form id="upload-form" action="/upload_and_analyze" method="POST" enctype="multipart/form-data" class="space-y-4">
+      <div>
+        <label for="conversation_id" class="block text-sm font-medium text-gray-700">Conversation ID</label>
+        <input type="text" name="conversation_id" id="conversation_id" class="w-full p-2 border rounded" placeholder="e.g. meeting-123" required>
+      </div>
+
+      <div>
+        <label for="model_name" class="block text-sm font-medium text-gray-700">Model</label>
+        <select name="model_name" id="model_name" class="w-full p-2 border rounded">
+          {% for m in models %}
           <option value="{{ m }}">{{ m }}</option>
-        {% endfor %}
-      </select>
-      <button id="analyze-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-        Analyze
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <p class="font-medium text-gray-700">Input Type</p>
+        <div class="flex items-center space-x-4 mt-1">
+          <label class="inline-flex items-center space-x-2">
+            <input type="radio" name="input_type" value="text" class="form-radio" checked>
+            <span>Text</span>
+          </label>
+          <label class="inline-flex items-center space-x-2">
+            <input type="radio" name="input_type" value="audio" class="form-radio">
+            <span>Audio</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="text-input-section">
+        <label for="text_input" class="block text-sm font-medium text-gray-700">Transcript Text</label>
+        <textarea name="text_input" id="text_input" rows="5" class="w-full p-2 border rounded" placeholder="Paste transcript here..."></textarea>
+      </div>
+
+      <div id="audio-input-section" class="hidden">
+        <label class="block text-sm font-medium text-gray-700">Audio File</label>
+        <input type="file" name="audio_file" id="audio_file" class="border p-2 w-full" accept="audio/*">
+      </div>
+
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Upload & Analyze
       </button>
-      <div id="loading" class="hidden text-gray-700">Analyzing, please wait...</div>
-    </div>
+    </form>
   </div>
 
-  <div class="container mx-auto flex-1 overflow-hidden">
-    <div id="results-container" class="hidden w-full h-full grid grid-cols-12 gap-4 overflow-hidden">
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const textSection = document.getElementById('text-input-section');
+  const audioSection = document.getElementById('audio-input-section');
+  const radios = document.querySelectorAll('input[name="input_type"]');
 
-      <!-- Left Column -->
-      <div class="col-span-3 flex flex-col space-y-4 overflow-auto pr-1">
-        <!-- Executive Summary -->
-        <div id="executive-summary" class="bg-white rounded-lg shadow p-4 border border-gray-100">
-          <h2 class="text-base font-semibold text-gray-800 mb-3">Executive Summary</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 class="text-sm font-medium text-gray-600 mb-1">Main Concerns</h3>
-              <ul id="main-concerns" class="space-y-1"></ul>
-            </div>
-            <div>
-              <h3 class="text-sm font-medium text-gray-600 mb-1">Critical Next Steps</h3>
-              <ul id="next-steps" class="space-y-1"></ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filters & Insights -->
-        <div class="bg-white rounded-lg shadow p-4 border border-gray-100 space-y-4">
-          <div class="space-y-2">
-            <div class="flex flex-wrap gap-2 items-center">
-              <span class="text-sm font-medium text-gray-700">Show:</span>
-              <label class="text-sm flex items-center space-x-1">
-                <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
-                <span>Conditions</span>
-              </label>
-              <label class="text-sm flex items-center space-x-1">
-                <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
-                <span>Medications</span>
-              </label>
-              <label class="text-sm flex items-center space-x-1">
-                <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
-                <span>Instructions</span>
-              </label>
-              <label class="text-sm flex items-center space-x-1">
-                <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
-                <span>Follow-ups</span>
-              </label>
-            </div>
-          </div>
-          <div id="insights" class="text-sm"></div>
-        </div>
-      </div>
-
-      <!-- Middle Column: Transcript -->
-      <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
-        <h2 class="text-base font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
-        <div id="transcript" class="space-y-2"></div>
-      </div>
-
-      <!-- Right Column: Tabs for Findings, Confusions, Clinician Insights -->
-      <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
-        <div class="flex space-x-4 mb-4 border-b pb-2">
-          <button class="tab-btn font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-tab="findings">Key Findings</button>
-          <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
-          <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="clinician">Clinician Insights</button>
-        </div>
-        
-        <!-- Key Findings Tab -->
-        <div id="findings-tab" class="tab-content space-y-6">
-          <div id="conditions" class="mb-6 entity-group" data-type="condition">
-            <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
-            <div class="space-y-2"></div>
-          </div>
-          <div id="medications" class="mb-6 entity-group" data-type="medication">
-            <h3 class="font-medium text-gray-700 mb-2">Medications</h3>
-            <div class="space-y-2"></div>
-          </div>
-          <div id="instructions" class="mb-6 entity-group" data-type="instruction">
-            <h3 class="font-medium text-gray-700 mb-2">Instructions</h3>
-            <div class="space-y-2"></div>
-          </div>
-          <div id="follow_ups" class="mb-6 entity-group" data-type="follow_up">
-            <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
-            <div class="space-y-2"></div>
-          </div>
-        </div>
-
-        <!-- Confusions Tab -->
-        <div id="confusions-tab" class="tab-content hidden space-y-3">
-          <div id="confusion-list" class="space-y-3"></div>
-        </div>
-
-        <!-- Clinician Insights Tab -->
-        <div id="clinician-tab" class="tab-content hidden space-y-3">
-          <h3 class="font-medium text-gray-700 mb-2">Clinician Insights</h3>
-          <ul id="clinician-insights" class="space-y-1 text-sm text-gray-700 list-disc list-inside"></ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+  radios.forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.value === 'text') {
+        textSection.classList.remove('hidden');
+        audioSection.classList.add('hidden');
+      } else {
+        textSection.classList.add('hidden');
+        audioSection.classList.remove('hidden');
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Conversation Analysis - Results</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .highlighted { background-color: #bfdbfe; }
+  .entity-inline {
+    background-color: #dbeafe;
+    border-bottom: 1px dotted #1e3a8a;
+    cursor: help;
+  }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6 text-gray-800">
+  <div class="mb-4">
+    <a href="{{ url_for('index') }}" class="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">← Back to Upload</a>
+  </div>
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-3 space-y-4 overflow-auto pr-1">
+      <!-- Executive Summary -->
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-100">
+        <h2 class="text-base font-semibold text-gray-800 mb-3">Executive Summary</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-600 mb-1">Main Concerns</h3>
+            <ul id="main-concerns" class="space-y-1"></ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-600 mb-1">Critical Next Steps</h3>
+            <ul id="next-steps" class="space-y-1"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-100 space-y-4">
+        <h3 class="text-sm font-medium text-gray-700 mb-2">Insights</h3>
+        <div id="insights" class="text-sm"></div>
+      </div>
+    </div>
+
+    <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
+      <h2 class="text-base font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
+      <div id="transcript" class="space-y-2" style="max-height:calc(100vh - 200px); overflow:auto;"></div>
+    </div>
+
+    <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
+      <div class="flex space-x-4 mb-4 border-b pb-2">
+        <button class="tab-btn font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-tab="findings">Key Findings</button>
+        <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
+        <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="clinician">Clinician Insights</button>
+      </div>
+      
+      <div id="findings-tab" class="tab-content space-y-6">
+        <div id="conditions" class="mb-6 entity-group" data-type="condition">
+          <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="medications" class="mb-6 entity-group" data-type="medication">
+          <h3 class="font-medium text-gray-700 mb-2">Medications</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="instructions" class="mb-6 entity-group" data-type="instruction">
+          <h3 class="font-medium text-gray-700 mb-2">Instructions</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="follow_ups" class="mb-6 entity-group" data-type="follow_up">
+          <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
+          <div class="space-y-2"></div>
+        </div>
+      </div>
+
+      <div id="confusions-tab" class="tab-content hidden space-y-3">
+        <div id="confusion-list" class="space-y-3"></div>
+      </div>
+
+      <div id="clinician-tab" class="tab-content hidden space-y-3">
+        <h3 class="font-medium text-gray-700 mb-2">Clinician Insights</h3>
+        <ul id="clinician-insights" class="space-y-1 text-sm text-gray-700 list-disc list-inside"></ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+const analysis = {{ analysis|tojson }};
+const transcript = {{ transcript|tojson }};
+
+// The JavaScript code is basically the same as before but simplified to just display results
+document.addEventListener('DOMContentLoaded', () => {
+    const ui = {
+        tabBtns: document.querySelectorAll('.tab-btn'),
+        mainConcerns: document.getElementById('main-concerns'),
+        nextSteps: document.getElementById('next-steps'),
+        transcriptEl: document.getElementById('transcript'),
+        confusionList: document.getElementById('confusion-list'),
+        insightsEl: document.getElementById('insights'),
+        clinicianInsightsEl: document.getElementById('clinician-insights'),
+    };
+
+    let globalData = {
+        entities: analysis.entities,
+        transcriptLines: transcript.split('\n').filter(l => l.trim())
+    };
+
+    // Tab switching
+    ui.tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            ui.tabBtns.forEach(b => b.classList.remove('border-blue-600', 'border-b-2', 'text-gray-800'));
+            btn.classList.add('border-b-2', 'border-blue-600', 'text-gray-800');
+
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+            const activeTab = btn.dataset.tab;
+            document.getElementById(`${activeTab}-tab`).classList.remove('hidden');
+        });
+    });
+
+    renderExecutiveSummary(analysis.summary);
+    const highlightedTranscript = highlightTranscript(globalData.transcriptLines, globalData.entities);
+    renderTranscript(highlightedTranscript);
+    renderEntities(globalData.entities);
+    renderConfusions(analysis.highlighted_confusions);
+    renderInsights(globalData.entities);
+    renderClinicianInsights(analysis.clinician_insights);
+
+    function renderExecutiveSummary(summary) {
+        ui.mainConcerns.innerHTML = summary.main_concerns
+            .map(c => `<li class="text-sm text-gray-700 leading-tight">${c}</li>`)
+            .join('');
+        ui.nextSteps.innerHTML = summary.critical_next_steps
+            .map(s => `<li class="text-sm text-gray-700 leading-tight">${s}</li>`)
+            .join('');
+    }
+
+    function renderTranscript(lines) {
+        ui.transcriptEl.innerHTML = lines.map((turn, i) => `
+        <div class="turn p-2 rounded hover:bg-gray-50" data-turn="${i}">${turn}</div>
+      `).join('');
+    }
+
+    function renderEntities(entities) {
+        const grouped = { condition: [], medication: [], instruction: [], follow_up: [] };
+        entities.forEach(e => {
+            grouped[e.type].push(e);
+        });
+
+        for (const [type, ents] of Object.entries(grouped)) {
+            const container = document.querySelector(`#${type}s .space-y-2`);
+            if (!container) continue;
+            container.innerHTML = ents.map(e => entityCard(e)).join('');
+        }
+    }
+
+    function entityCard(e) {
+        const turns = e.related_turns.join(',');
+        const displayText = e.patient_explanation || e.text || '(No explanation)';
+        return `
+        <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer relative"
+          onclick="highlightTurns('${turns}')">
+          <div class="flex items-start justify-between">
+            <div class="pr-6">
+              <div class="flex items-center space-x-2 mb-1">
+                <span class="text-sm font-medium text-gray-800">${e.text || '(No text)'}</span>
+                <span class="px-2 py-0.5 text-xs rounded-full ${getTypeColor(e.type)}">${e.type}</span>
+              </div>
+              <p class="text-sm text-gray-600 line-clamp-2">${displayText}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getTypeColor(type) {
+        const colors = {
+            condition: 'bg-red-100 text-red-800',
+            medication: 'bg-green-100 text-green-800',
+            instruction: 'bg-yellow-100 text-yellow-800',
+            follow_up: 'bg-blue-100 text-blue-800'
+        };
+        return colors[type] || 'bg-gray-100 text-gray-800';
+    }
+
+    function renderConfusions(confusions) {
+        ui.confusionList.innerHTML = confusions.map(c => `
+        <div class="p-2 bg-amber-50 rounded text-sm">${c}</div>
+      `).join('');
+    }
+
+    function renderInsights(entities) {
+        const counts = { condition: 0, medication: 0, instruction: 0, follow_up: 0 };
+        entities.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
+
+        ui.insightsEl.innerHTML = `
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-700">Aggregate Insights:</div>
+          <div>Conditions: ${counts.condition}</div>
+          <div>Medications: ${counts.medication}</div>
+          <div>Instructions: ${counts.instruction}</div>
+          <div>Follow-ups: ${counts.follow_up}</div>
+        </div>
+      `;
+    }
+
+    window.highlightTurns = function (turns) {
+        document.querySelectorAll('.turn.highlighted').forEach(el => {
+            el.classList.remove('bg-blue-100', 'highlighted');
+        });
+        const arr = turns.split(',').map(n => parseInt(n, 10));
+        arr.forEach(i => {
+            const t = document.querySelector(`[data-turn="${i}"]`);
+            if (t) {
+                t.classList.add('bg-blue-100', 'highlighted');
+                t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    };
+
+    function highlightTranscript(lines, entities) {
+        const byTurn = {};
+        entities.forEach(e => {
+            if (e.first_mention_turn !== null && e.text) {
+                byTurn[e.first_mention_turn] = byTurn[e.first_mention_turn] || [];
+                byTurn[e.first_mention_turn].push(e);
+            }
+        });
+
+        return lines.map((line, i) => {
+            if (!byTurn[i]) return line;
+            let highlightedLine = line;
+            for (const ent of byTurn[i]) {
+                const { text, patient_explanation } = ent;
+                if (!text) continue;
+                const idx = highlightedLine.toLowerCase().indexOf(text.toLowerCase());
+                if (idx >= 0) {
+                    const before = highlightedLine.slice(0, idx);
+                    const match = highlightedLine.slice(idx, idx + text.length);
+                    const after = highlightedLine.slice(idx + text.length);
+                    const tooltip = patient_explanation || text;
+                    highlightedLine = `${before}<span class="entity-inline" title="${tooltip}">${match}</span>${after}`;
+                }
+            }
+            return highlightedLine;
+        });
+    }
+});
+</script>
+</body>
+</html>
