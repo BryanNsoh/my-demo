@@ -1,4 +1,3 @@
-<!-- app/templates/results.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,68 +17,74 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
+
+  .full-height {
+    height: calc(100vh - 8rem);
+  }
+  .overflow-auto {
+    overflow: auto;
+  }
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen p-6 text-gray-800">
   <div class="mb-4">
     <a href="{{ url_for('index') }}" class="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">← Back to Upload</a>
   </div>
-  <div class="grid grid-cols-12 gap-4">
-    <div class="col-span-3 space-y-4 overflow-auto pr-1">
-      <!-- Executive Summary -->
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-100">
-        <h2 class="text-base font-semibold text-gray-800 mb-3">Executive Summary</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h3 class="text-sm font-medium text-gray-600 mb-1">Main Concerns</h3>
-            <ul id="main-concerns" class="space-y-1"></ul>
-          </div>
-          <div>
-            <h3 class="text-sm font-medium text-gray-600 mb-1">Critical Next Steps</h3>
-            <ul id="next-steps" class="space-y-1"></ul>
-          </div>
-        </div>
-      </div>
 
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-100 space-y-4">
-        <h3 class="text-sm font-medium text-gray-700 mb-2">Insights</h3>
-        <div id="insights" class="text-sm"></div>
+  <div class="mb-4 flex space-x-4 border-b pb-2">
+    <button class="view-tab font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-view="patient">Patient View</button>
+    <button class="view-tab font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-view="clinician">Clinician View</button>
+  </div>
+
+  <!-- Patient View Layout -->
+  <div id="patient-view" class="grid grid-cols-12 gap-4 full-height">
+    <div class="col-span-3 flex flex-col">
+      <div class="flex-none">
+        <h2 class="text-base font-semibold text-gray-800 mb-3">Your Health Summary</h2>
+      </div>
+      <div class="flex-grow overflow-auto space-y-4 bg-white rounded-lg shadow p-4 border border-gray-100">
+        <h3 class="text-sm font-medium text-gray-700 mb-2">Main Concerns</h3>
+        <ul id="pf-concerns" class="space-y-1 text-sm text-gray-700"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Next Steps</h3>
+        <ul id="pf-next-steps" class="space-y-1 text-sm text-gray-700"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Medications</h3>
+        <ul id="pf-meds" class="space-y-1 text-sm text-gray-700"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Lifestyle Suggestions</h3>
+        <ul id="pf-lifestyle" class="space-y-1 text-sm text-gray-700"></ul>
       </div>
     </div>
 
-    <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
+    <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col">
       <h2 class="text-base font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
-      <div id="transcript" class="space-y-2" style="max-height:calc(100vh - 200px); overflow:auto;"></div>
+      <div id="transcript" class="flex-grow overflow-auto space-y-2"></div>
     </div>
 
-    <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col overflow-auto">
-      <div class="flex space-x-4 mb-4 border-b pb-2">
-        <button class="tab-btn font-medium border-b-2 border-blue-600 text-gray-800 focus:outline-none" data-tab="findings">Key Findings</button>
-        <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="confusions">Potential Confusions</button>
-        <button class="tab-btn font-medium text-gray-600 hover:text-gray-800 focus:outline-none" data-tab="clinician">Clinician Insights</button>
-      </div>
+    <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col">
+      <h2 class="text-base font-semibold mb-3 text-gray-800">Entities & Confusions</h2>
+      <div class="flex-grow overflow-auto space-y-4">
+        <p class="text-xs text-gray-500 mb-2">Filter Entities by type:</p>
+        <div class="flex space-x-4 mb-2">
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
+            <span class="ml-2">Conditions</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
+            <span class="ml-2">Medications</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
+            <span class="ml-2">Instructions</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
+            <span class="ml-2">Follow-ups</span>
+          </label>
+        </div>
 
-      <!-- Filter Checkboxes -->
-      <div class="flex space-x-4 mb-2">
-        <label class="inline-flex items-center">
-          <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
-          <span class="ml-2">Conditions</span>
-        </label>
-        <label class="inline-flex items-center">
-          <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
-          <span class="ml-2">Medications</span>
-        </label>
-        <label class="inline-flex items-center">
-          <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
-          <span class="ml-2">Instructions</span>
-        </label>
-        <label class="inline-flex items-center">
-          <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
-          <span class="ml-2">Follow-ups</span>
-        </label>
-      </div>
-      
-      <div id="findings-tab" class="tab-content space-y-6">
         <div id="conditions" class="mb-6 entity-group" data-type="condition">
           <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
           <div class="space-y-2"></div>
@@ -96,15 +101,84 @@
           <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
           <div class="space-y-2"></div>
         </div>
-      </div>
 
-      <div id="confusions-tab" class="tab-content hidden space-y-3">
+        <h3 class="font-medium text-gray-700 mb-2">Potential Confusions</h3>
         <div id="confusion-list" class="space-y-3"></div>
       </div>
+    </div>
+  </div>
 
-      <div id="clinician-tab" class="tab-content hidden space-y-3">
-        <h3 class="font-medium text-gray-700 mb-2">Clinician Insights</h3>
-        <ul id="clinician-insights" class="space-y-1 text-sm text-gray-700 list-disc list-inside"></ul>
+  <!-- Clinician View Layout -->
+  <div id="clinician-view" class="grid grid-cols-12 gap-4 full-height hidden">
+    <div class="col-span-3 flex flex-col">
+      <div class="flex-none">
+        <h2 class="text-base font-semibold text-gray-800 mb-3">Clinical Summary</h2>
+      </div>
+      <div class="flex-grow overflow-auto space-y-4 bg-white rounded-lg shadow p-4 border border-gray-100">
+        <h3 class="text-sm font-medium text-gray-700 mb-2">Assessment</h3>
+        <ul id="cf-assessment" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Recommendations</h3>
+        <ul id="cf-recommendations" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Ambiguities</h3>
+        <ul id="cf-ambiguities" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Differential Diagnoses</h3>
+        <ul id="cf-ddx" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+
+        <h3 class="text-sm font-medium text-gray-700 mt-4">Diagnostic Steps</h3>
+        <ul id="cf-dx-steps" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+      </div>
+    </div>
+
+    <div class="col-span-5 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col">
+      <h2 class="text-base font-semibold mb-3 text-gray-800">Conversation Transcript</h2>
+      <div id="transcript2" class="flex-grow overflow-auto space-y-2"></div>
+    </div>
+
+    <div class="col-span-4 bg-white rounded-lg shadow p-4 border border-gray-100 flex flex-col">
+      <h2 class="text-base font-semibold mb-3 text-gray-800">Entities & Confusions</h2>
+      <div class="flex-grow overflow-auto space-y-4">
+        <p class="text-xs text-gray-500 mb-2">Filter Entities by type:</p>
+        <div class="flex space-x-4 mb-2">
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="condition" checked>
+            <span class="ml-2">Conditions</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="medication" checked>
+            <span class="ml-2">Medications</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="instruction" checked>
+            <span class="ml-2">Instructions</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="filter-checkbox" data-type="follow_up" checked>
+            <span class="ml-2">Follow-ups</span>
+          </label>
+        </div>
+
+        <div id="conditions" class="mb-6 entity-group" data-type="condition">
+          <h3 class="font-medium text-gray-700 mb-2">Conditions</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="medications" class="mb-6 entity-group" data-type="medication">
+          <h3 class="font-medium text-gray-700 mb-2">Medications</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="instructions" class="mb-6 entity-group" data-type="instruction">
+          <h3 class="font-medium text-gray-700 mb-2">Instructions</h3>
+          <div class="space-y-2"></div>
+        </div>
+        <div id="follow_ups" class="mb-6 entity-group" data-type="follow_up">
+          <h3 class="font-medium text-gray-700 mb-2">Follow-ups</h3>
+          <div class="space-y-2"></div>
+        </div>
+
+        <h3 class="font-medium text-gray-700 mb-2">Potential Confusions</h3>
+        <div id="confusion-list" class="space-y-3"></div>
       </div>
     </div>
   </div>
@@ -114,208 +188,153 @@ const analysis = {{ analysis|tojson }};
 const transcript = {{ transcript|tojson }};
 
 document.addEventListener('DOMContentLoaded', () => {
-    const ui = {
-        tabBtns: document.querySelectorAll('.tab-btn'),
-        mainConcerns: document.getElementById('main-concerns'),
-        nextSteps: document.getElementById('next-steps'),
-        transcriptEl: document.getElementById('transcript'),
-        confusionList: document.getElementById('confusion-list'),
-        insightsEl: document.getElementById('insights'),
-        clinicianInsightsEl: document.getElementById('clinician-insights'),
-        filterCheckboxes: document.querySelectorAll('.filter-checkbox')
-    };
+  const patientView = document.getElementById('patient-view');
+  const clinicianView = document.getElementById('clinician-view');
+  const viewTabs = document.querySelectorAll('.view-tab');
 
-    let globalData = {
-        entities: analysis.entities,
-        transcriptLines: transcript.split('\n').filter(l => l.trim())
-    };
-
-    // Tab switching
-    ui.tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            ui.tabBtns.forEach(b => b.classList.remove('border-blue-600', 'border-b-2', 'text-gray-800'));
-            btn.classList.add('border-b-2', 'border-blue-600', 'text-gray-800');
-
-            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
-            const activeTab = btn.dataset.tab;
-            document.getElementById(`${activeTab}-tab`).classList.remove('hidden');
-        });
+  viewTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      viewTabs.forEach(t => t.classList.remove('border-blue-600','border-b-2','text-gray-800'));
+      tab.classList.add('border-b-2','border-blue-600','text-gray-800');
+      const targetView = tab.dataset.view;
+      if (targetView === 'patient') {
+        patientView.classList.remove('hidden');
+        clinicianView.classList.add('hidden');
+      } else {
+        clinicianView.classList.remove('hidden');
+        patientView.classList.add('hidden');
+      }
     });
+  });
 
-    // Apply filters
-    ui.filterCheckboxes.forEach(cb => {
-        cb.addEventListener('change', applyFilters);
-    });
+  const ui = {
+    pfConcerns: document.getElementById('pf-concerns'),
+    pfNextSteps: document.getElementById('pf-next-steps'),
+    pfMeds: document.getElementById('pf-meds'),
+    pfLifestyle: document.getElementById('pf-lifestyle'),
+    cfAssessment: document.getElementById('cf-assessment'),
+    cfRecommendations: document.getElementById('cf-recommendations'),
+    cfAmbiguities: document.getElementById('cf-ambiguities'),
+    cfDDX: document.getElementById('cf-ddx'),
+    cfDxSteps: document.getElementById('cf-dx-steps'),
+    transcriptEl: document.getElementById('transcript'),
+    transcriptEl2: document.getElementById('transcript2'),
+    confusionList: document.getElementById('confusion-list'),
+    filterCheckboxes: document.querySelectorAll('.filter-checkbox')
+  };
 
-    function applyFilters() {
-        const filters = {};
-        ui.filterCheckboxes.forEach(cb => {
-            filters[cb.dataset.type] = cb.checked;
-        });
+  let globalData = {
+    entities: analysis.entities,
+    transcriptLines: transcript.split('\n').filter(l => l.trim())
+  };
 
-        document.querySelectorAll('.entity-group').forEach(g => {
-            const t = g.getAttribute('data-type');
-            g.style.display = filters[t] ? '' : 'none';
-        });
-    }
-
-    function renderExecutiveSummary(summary) {
-        ui.mainConcerns.innerHTML = summary.main_concerns
-            .map(c => `<li class="text-sm text-gray-700 leading-tight">${c}</li>`)
-            .join('');
-        ui.nextSteps.innerHTML = summary.critical_next_steps
-            .map(s => `<li class="text-sm text-gray-700 leading-tight">${s}</li>`)
-            .join('');
-    }
-
-    function renderTranscript(lines) {
-        ui.transcriptEl.innerHTML = lines.map((turn, i) => `
-            <div class="turn p-2 rounded hover:bg-gray-50" data-turn="${i}">${turn}</div>
-        `).join('');
-    }
-
-    function renderEntities(entities) {
-        const grouped = { condition: [], medication: [], instruction: [], follow_up: [] };
-        entities.forEach(e => {
-            grouped[e.type].push(e);
-        });
-
-        for (const [type, ents] of Object.entries(grouped)) {
-            const container = document.querySelector(`#${type}s .space-y-2`);
-            if (!container) continue;
-            container.innerHTML = ents.map(e => entityCard(e)).join('');
-        }
-    }
-
-    function entityCard(e) {
-        const turns = e.related_turns.join(',');
-        const displayText = e.patient_explanation || e.text || '(No explanation)';
-        
-        return `
-        <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer relative"
-          onclick="highlightTurns('${turns}')">
-          <div class="flex items-start justify-between">
-            <div class="pr-6">
-              <div class="flex items-center space-x-2 mb-1">
-                <span class="text-sm font-medium text-gray-800">${e.text || '(No text)'}</span>
-                <span class="px-2 py-0.5 text-xs rounded-full ${getTypeColor(e.type)}">${e.type}</span>
-              </div>
-              <p class="text-sm text-gray-600 line-clamp-2">${displayText}</p>
+  function entityCard(e) {
+    const turns = e.related_turns.join(',');
+    const displayText = e.patient_explanation || e.text || '(No explanation)';
+    return `
+      <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer relative"
+        onclick="highlightTurns('${turns}')">
+        <div class="flex items-start justify-between">
+          <div class="pr-6">
+            <div class="flex items-center space-x-2 mb-1">
+              <span class="text-sm font-medium text-gray-800">${e.text || '(No text)'}</span>
+              <span class="px-2 py-0.5 text-xs rounded-full ${getTypeColor(e.type)}">${e.type}</span>
             </div>
-            <button class="text-blue-600 text-xs hover:text-blue-700 focus:outline-none"
-              onclick="event.stopPropagation();toggleMoreInfo(this)">More info</button>
-          </div>
-          <div class="more-info hidden mt-3 pt-3 border-t border-gray-100">
-            ${moreInfoContent(e)}
+            <p class="text-sm text-gray-600 line-clamp-2">${displayText}</p>
           </div>
         </div>
-        `;
-    }
+      </div>
+    `;
+  }
 
-    window.toggleMoreInfo = function(btn) {
-        const parent = btn.closest('.p-4');
-        const moreInfo = parent.querySelector('.more-info');
-        moreInfo.classList.toggle('hidden');
+  window.highlightTurns = function(turns) {
+    document.querySelectorAll('.turn.highlighted').forEach(el => {
+        el.classList.remove('bg-blue-100', 'highlighted');
+    });
+    const arr = turns.split(',').map(n => parseInt(n, 10));
+    arr.forEach(i => {
+        const t = document.querySelector(`[data-turn="${i}"]`);
+        if (t) {
+            t.classList.add('bg-blue-100', 'highlighted');
+            t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+  };
+
+  function getTypeColor(type) {
+    const colors = {
+      condition: 'bg-red-100 text-red-800',
+      medication: 'bg-green-100 text-green-800',
+      instruction: 'bg-yellow-100 text-yellow-800',
+      follow_up: 'bg-blue-100 text-blue-800'
     };
+    return colors[type] || 'bg-gray-100 text-gray-800';
+  }
 
-    function moreInfoContent(e) {
-        let info = `<div class="space-y-1 text-xs text-gray-700">`;
-        info += `<div><strong>Type:</strong> ${e.type}</div>`;
-        if (e.dosage) info += `<div><strong>Dosage:</strong> ${e.dosage}</div>`;
-        if (e.first_mention_turn !== null) info += `<div><strong>First Mention Turn:</strong> ${e.first_mention_turn}</div>`;
-        if (e.needs_clarification) info += `<div class="text-amber-600">Needs clarification</div>`;
-        info += `</div>`;
-        return info;
+  function renderTranscript(lines, el) {
+    el.innerHTML = lines.map((turn, i) => `
+        <div class="turn p-2 rounded hover:bg-gray-50" data-turn="${i}">${turn}</div>
+    `).join('');
+  }
+
+  function applyFilters() {
+    const filters = {};
+    ui.filterCheckboxes.forEach(cb => {
+      filters[cb.dataset.type] = cb.checked;
+    });
+
+    document.querySelectorAll('.entity-group').forEach(g => {
+      const t = g.getAttribute('data-type');
+      g.style.display = filters[t] ? '' : 'none';
+    });
+  }
+
+  function renderEntities(entities) {
+    const grouped = { condition: [], medication: [], instruction: [], follow_up: [] };
+    entities.forEach(e => {
+      grouped[e.type].push(e);
+    });
+
+    for (const [type, ents] of Object.entries(grouped)) {
+      const container = document.querySelector(`#${type}s .space-y-2`);
+      if (!container) continue;
+      container.innerHTML = ents.map(e => entityCard(e)).join('');
     }
+  }
 
-    function getTypeColor(type) {
-        const colors = {
-            condition: 'bg-red-100 text-red-800',
-            medication: 'bg-green-100 text-green-800',
-            instruction: 'bg-yellow-100 text-yellow-800',
-            follow_up: 'bg-blue-100 text-blue-800'
-        };
-        return colors[type] || 'bg-gray-100 text-gray-800';
-    }
+  function renderConfusions(confusions) {
+    ui.confusionList.innerHTML = confusions.map(c => `
+      <div class="p-2 bg-amber-50 rounded text-sm">${c}</div>
+    `).join('');
+  }
 
-    function renderConfusions(confusions) {
-        ui.confusionList.innerHTML = confusions.map(c => `
-            <div class="p-2 bg-amber-50 rounded text-sm">${c}</div>
-        `).join('');
-    }
+  // Render from analysis
+  renderTranscript(globalData.transcriptLines, ui.transcriptEl);
+  renderTranscript(globalData.transcriptLines, ui.transcriptEl2);
+  renderEntities(globalData.entities);
+  renderConfusions(analysis.highlighted_confusions);
+  applyFilters();
 
-    function renderInsights(entities) {
-        const counts = { condition: 0, medication: 0, instruction: 0, follow_up: 0 };
-        entities.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
+  // Render patient-friendly info
+  function renderReferencedList(container, items) {
+    container.innerHTML = items.map(item => {
+      const turnRefs = item.turns.join(',');
+      return `<li class="cursor-pointer" onclick="highlightTurns('${turnRefs}')"><strong>${item.title}:</strong> ${item.description}</li>`;
+    }).join('');
+  }
 
-        ui.insightsEl.innerHTML = `
-            <div class="space-y-2">
-              <div class="text-sm font-medium text-gray-700">Aggregate Insights:</div>
-              <div>Conditions: ${counts.condition}</div>
-              <div>Medications: ${counts.medication}</div>
-              <div>Instructions: ${counts.instruction}</div>
-              <div>Follow-ups: ${counts.follow_up}</div>
-            </div>
-        `;
-    }
+  renderReferencedList(ui.pfConcerns, analysis.patient_friendly.main_concerns);
+  renderReferencedList(ui.pfNextSteps, analysis.patient_friendly.next_steps);
+  renderReferencedList(ui.pfMeds, analysis.patient_friendly.medication_notes);
+  renderReferencedList(ui.pfLifestyle, analysis.patient_friendly.lifestyle_suggestions);
 
-    function renderClinicianInsights(insights) {
-        ui.clinicianInsightsEl.innerHTML = insights.map(
-            insight => `<li class="leading-tight list-item list-disc ml-4">${insight}</li>`
-        ).join('');
-    }
+  // Render clinician-friendly info
+  renderReferencedList(ui.cfAssessment, analysis.clinician_friendly.assessment);
+  renderReferencedList(ui.cfRecommendations, analysis.clinician_friendly.recommendations);
+  renderReferencedList(ui.cfAmbiguities, analysis.clinician_friendly.ambiguities);
+  renderReferencedList(ui.cfDDX, analysis.clinician_friendly.differential_diagnoses);
+  renderReferencedList(ui.cfDxSteps, analysis.clinician_friendly.diagnostic_steps);
 
-    window.highlightTurns = function(turns) {
-        document.querySelectorAll('.turn.highlighted').forEach(el => {
-            el.classList.remove('bg-blue-100', 'highlighted');
-        });
-        const arr = turns.split(',').map(n => parseInt(n, 10));
-        arr.forEach(i => {
-            const t = document.querySelector(`[data-turn="${i}"]`);
-            if (t) {
-                t.classList.add('bg-blue-100', 'highlighted');
-                t.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        });
-    };
-
-    function highlightTranscript(lines, entities) {
-        const byTurn = {};
-        entities.forEach(e => {
-            if (e.first_mention_turn !== null && e.text) {
-                byTurn[e.first_mention_turn] = byTurn[e.first_mention_turn] || [];
-                byTurn[e.first_mention_turn].push(e);
-            }
-        });
-
-        return lines.map((line, i) => {
-            if (!byTurn[i]) return line;
-            let highlightedLine = line;
-            for (const ent of byTurn[i]) {
-                const { text, patient_explanation } = ent;
-                if (!text) continue;
-                const idx = highlightedLine.toLowerCase().indexOf(text.toLowerCase());
-                if (idx >= 0) {
-                    const before = highlightedLine.slice(0, idx);
-                    const match = highlightedLine.slice(idx, idx + text.length);
-                    const after = highlightedLine.slice(idx + text.length);
-                    const tooltip = patient_explanation || text;
-                    highlightedLine = `${before}<span class="entity-inline" title="${tooltip}">${match}</span>${after}`;
-                }
-            }
-            return highlightedLine;
-        });
-    }
-
-    // Initialize everything
-    renderExecutiveSummary(analysis.summary);
-    const highlightedTranscript = highlightTranscript(globalData.transcriptLines, globalData.entities);
-    renderTranscript(highlightedTranscript);
-    renderEntities(globalData.entities);
-    renderConfusions(analysis.highlighted_confusions);
-    renderInsights(globalData.entities);
-    renderClinicianInsights(analysis.clinician_insights);
-    applyFilters();
 });
 </script>
 </body>

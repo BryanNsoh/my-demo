@@ -2,6 +2,30 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 
 
+class ReferencedItem(BaseModel):
+    # A generic item referencing certain transcript turns
+    title: str
+    description: str
+    turns: List[int] = Field(default_factory=list)
+
+
+class PatientFriendlySection(BaseModel):
+    # Patient-friendly summary of conditions, instructions, etc.
+    main_concerns: List[ReferencedItem] = Field(default_factory=list)
+    next_steps: List[ReferencedItem] = Field(default_factory=list)
+    medication_notes: List[ReferencedItem] = Field(default_factory=list)
+    lifestyle_suggestions: List[ReferencedItem] = Field(default_factory=list)
+
+
+class ClinicianFriendlySection(BaseModel):
+    # Clinician-focused insights: differential diagnoses, recommended tests, ambiguities
+    assessment: List[ReferencedItem] = Field(default_factory=list)
+    recommendations: List[ReferencedItem] = Field(default_factory=list)
+    ambiguities: List[ReferencedItem] = Field(default_factory=list)
+    differential_diagnoses: List[ReferencedItem] = Field(default_factory=list)
+    diagnostic_steps: List[ReferencedItem] = Field(default_factory=list)
+
+
 class ExtractedEntity(BaseModel):
     type: Literal["condition", "medication", "instruction", "follow_up"]
     name: Optional[str] = None
@@ -21,7 +45,7 @@ class AmbiguousTermResolution(BaseModel):
 
 
 class LLMTermExtractionResponse(BaseModel):
-    entities: List[ExtractedEntity]
+    entities: List[ExtractedEntity] = Field(default_factory=list)
     context_samples: List[AmbiguousTermResolution] = Field(default_factory=list)
 
 
@@ -35,4 +59,10 @@ class ConversationAnalysis(BaseModel):
     summary: ExecutiveSummary
     entities: List[ExtractedEntity] = Field(default_factory=list)
     highlighted_confusions: List[str] = Field(default_factory=list)
-    clinician_insights: List[str] = Field(default_factory=list)
+    # Instead of just lists of strings, we have structured patient and clinician info
+    patient_friendly: PatientFriendlySection = Field(
+        default_factory=PatientFriendlySection
+    )
+    clinician_friendly: ClinicianFriendlySection = Field(
+        default_factory=ClinicianFriendlySection
+    )
