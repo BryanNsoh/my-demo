@@ -1,0 +1,134 @@
+{
+  "analysis": {
+    "conversation_id": "transcript3",
+    "summary": {
+      "main_concerns": [
+        "that's higher than our target. Are you still taking the metformin twice a day and the little white pill for your cholesterol at night?"
+      ],
+      "critical_next_steps": [
+        "Check your blood sugar in two weeks."
+      ]
+    },
+    "entities": [
+      {
+        "type": "condition",
+        "name": "high blood sugar",
+        "dosage": null,
+        "text": "that's higher than our target. Are you still taking the metformin twice a day and the little white pill for your cholesterol at night?",
+        "first_mention_turn": 1,
+        "patient_explanation": "My number is higher than last time and I think I check my method. Fasten levels are around 160, sometimes 180 but I'm not sure what's going on.",
+        "related_turns": [
+          1
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "medication",
+        "name": "metformin",
+        "dosage": "twice a day",
+        "text": "Are you still taking the metformin twice a day and the little white pill for your cholesterol at night?",
+        "first_mention_turn": 5,
+        "patient_explanation": "I'm taking the metorphin but I changed the timing. You said with meals right?",
+        "related_turns": [
+          5
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "medication",
+        "name": "glipizide",
+        "dosage": null,
+        "text": "Oh the pink tablet is glip-aside. You said last visit you had trouble remembering if you took it in the morning.",
+        "first_mention_turn": 13,
+        "patient_explanation": "I'm still on that other diabetes pills, the pink one but I don't know how that's called.",
+        "related_turns": [
+          13
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "Take metformin with meals to reduce the stomach upset",
+        "first_mention_turn": 9,
+        "patient_explanation": "I changed the timing. You said with meals right? I'm sometimes talking it after I finish eating sometimes before.",
+        "related_turns": [
+          9
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "Be consistent with medication timing.",
+        "first_mention_turn": 33,
+        "patient_explanation": "I guess it's not working.",
+        "related_turns": [
+          33
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "Take glipizide in the morning before breakfast. Set a full alarm if you need.",
+        "first_mention_turn": 33,
+        "patient_explanation": "I said I will try to improve diet first. Did you write a prescription? I don't remember. Sorry about that.",
+        "related_turns": [
+          33
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "Limit empanadas to once a week. Swap them for salad or grilled vegetables.",
+        "first_mention_turn": 34,
+        "patient_explanation": "Oh not yet but I will. Maybe my mother can help me.",
+        "related_turns": [
+          34
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "medication",
+        "name": "insulin",
+        "dosage": null,
+        "text": "I want to confirm you are still taking that long acting insulin at bedtime right?",
+        "first_mention_turn": 25,
+        "patient_explanation": "Oh I never started. We discussed it but I said I will try to improve diet first.",
+        "related_turns": [
+          25
+        ],
+        "needs_clarification": true
+      },
+      {
+        "type": "follow_up",
+        "name": null,
+        "dosage": null,
+        "text": "Check your blood sugar in two weeks.",
+        "first_mention_turn": 35,
+        "patient_explanation": "I will try to do the walk and two. Maybe after dinner just a quick walk around the block.",
+        "related_turns": [
+          35
+        ],
+        "needs_clarification": false
+      }
+    ],
+    "highlighted_confusions": [
+      "Afternoon. I'm a bit confused about that. My number is higher than last time and I think I check my method. Fasten levels are around 160, sometimes 180 but I'm not sure what's going on.",
+      "consistent. Have you had any stomach issues? A bit often now is last week. Also I'm still on that other diabetes pills, the pink one but I don't know how that's called."
+    ],
+    "clinician_insights": [
+      "Possible conditions: Poor blood sugar control possibly due to inconsistent medication adherence or dietary choices.",
+      "Medication adherence issues: Patient struggles with timing of metformin and glipizide, often forgetting doses due to early shifts.",
+      "Key lifestyle factors: Diet includes high-carbohydrate foods (empanadas) and limited physical activity, with rare walks after dinner.",
+      "Next diagnostic steps: Schedule follow-up in two weeks to monitor blood sugar levels and discuss insulin initiation if needed."
+    ]
+  },
+  "transcript": "Speaker 1 [0:00:00]:\nGood afternoon Mrs. Alvarez. How are you managing your blood sugar legally? \nSpeaker 2 [0:00:14]:\nAfternoon. I'm a bit confused about that. My number is higher than last time and I think I check my method. Fasten levels are around 160, sometimes 180 but I'm not sure what's going on. \nSpeaker 1 [0:00:30]:\nThat's higher than our target. Are you still taking the metformin twice a day and the little white pill for your cholesterol at night? \nSpeaker 2 [0:00:39]:\nI'm taking the metorphin but I changed the timing. You said with meals right? I'm sometimes talking it after I finish eating sometimes before. Doesn't matter. \nSpeaker 1 [0:00:54]:\nWell generally you want to take it with the meal to reduce the stomach upset and it helps to be \nSpeaker 2 [0:01:00]:\nconsistent. Have you had any stomach issues? A bit often now is last week. Also I'm still on that other diabetes pills, the pink one but I don't know how that's called. \nSpeaker 1 [0:01:15]:\nOh the pink tablet is glip-aside. You said last visit you had trouble remembering if you took it \nSpeaker 2 [0:01:22]:\nin the morning. Are you still struggling with that? Yeah sometimes I skip it. I work early shifts now and I forgot. Also my diet it's a little bit over like not in the same place all the time. I started in empanadas. My neighbor who makes that and there are delicious but maybe too high in \nSpeaker 1 [0:01:44]:\ncare. Empanadas are carb heavy. We need to balance your meals. Have you been following the plan we made? Half a plate of vegetables, a quarter protein and a quarter carbs? Not really. I get rushed \nSpeaker 2 [0:01:58]:\nand just grabbing what is available. As you know my husband brought some things and said low sugar cooks and all that but I eat more than I should. There are low sugar but maybe \nSpeaker 1 [0:02:13]:\nstill too much. Low sugar doesn't mean low carb or low calorie. Let's refocus. Your blood sugar is high likely because of inconsistent medication timing and not following the meal plan. So you said last time you tried to take a short walk after dinner. Are you doing that? I did once or twice but then \nSpeaker 2 [0:02:35]:\nI got busy and after work I'm too tired. I just sit and watch TV. Sorry about that. \nSpeaker 1 [0:02:45]:\nIt's understandable but crucial even a 10 minute walk can help. Also I want to confirm you are still taking that long acting insulin at bedtime right? Oh I never started. We discussed it but \nSpeaker 2 [0:03:03]:\nI said I will try to improve diet first. Did you write a prescription? I don't remember. Sorry about \nSpeaker 1 [0:03:13]:\nit. Yes I gave you a prescription but it's okay. We all forget. You never picked it up. That's fine but that might explain why the numbers are still high. Without the insulin we're relying only on pills. \nSpeaker 2 [0:03:27]:\nI was afraid of needles. I want to see if diet or pills would be enough but I guess it's not working. \nSpeaker 1 [0:03:41]:\nLet's set a clear plan Mrs. Alvarez. First you need to be consistent with performing. Take it at the same times with meals. Second take the glip inside in the morning before breakfast. Set a full alarm if you need. Third pick out the insulin. I'll show you how to inject it. Just once at bedtime a small needle almost painless. Okay I will try. I know I have to control this. I don't want complications. Exactly. Also limit empanadas to once a week. Swap them for salad or grilled vegetables. You liked that veggie recipe we discussed last time. Did you try it? \nSpeaker 2 [0:04:26]:\nOh not yet but I will. Maybe my mother can help me. I will try to do the walk and two. Maybe after dinner just a quick walk around the block. Perfect. We will check your sugar \nSpeaker 1 [0:04:41]:\nodds in two weeks. I want to see fasting levels on the 130 milligram if possible. If not we might \nSpeaker 2 [0:04:47]:\nneed to adjust that insulin. Okay I will pick up the insulin. Do you need a follow-up soon? \nSpeaker 1 [0:04:54]:\nYes please come back in two weeks with your readings. If you have side effects call me and remember no skipping pills. Set alarms and organize the pill boxes whatever it takes. \nSpeaker 2 [0:05:07]:\nI will do doctor. Gracias. I really appreciate your patience. Gracias. Gracias. \nSpeaker 1 [0:05:12]:\nWe're in this together. Stay consistent and we'll see some improvement. Okay. Gracias doctor."
+}

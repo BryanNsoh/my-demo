@@ -1,0 +1,216 @@
+{
+  "analysis": {
+    "conversation_id": "test2",
+    "summary": {
+      "main_concerns": [
+        "that stomach burning"
+      ],
+      "critical_next_steps": [
+        "we'll review in a week"
+      ]
+    },
+    "entities": [
+      {
+        "type": "condition",
+        "name": "stomach burning",
+        "dosage": null,
+        "text": "that stomach burning",
+        "first_mention_turn": 1,
+        "patient_explanation": "This refers to the uncomfortable sensation in the stomach that feels like burning.",
+        "related_turns": [
+          1,
+          4,
+          9,
+          14,
+          22,
+          25
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "medication",
+        "name": "green bottle medication",
+        "dosage": null,
+        "text": "the green bottle medication",
+        "first_mention_turn": 2,
+        "patient_explanation": "This is a medication that helps manage stomach issues and is taken every morning.",
+        "related_turns": [
+          2,
+          10,
+          18,
+          26
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "stop drinking tea",
+        "first_mention_turn": 14,
+        "patient_explanation": "Avoid drinking tea completely for a week to see if that helps with the symptoms.",
+        "related_turns": [
+          14,
+          16,
+          28
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "instruction",
+        "name": null,
+        "dosage": null,
+        "text": "take the pink tablet",
+        "first_mention_turn": 10,
+        "patient_explanation": "This tablet needs to be taken before giving a stool sample for testing.",
+        "related_turns": [
+          10,
+          12,
+          13
+        ],
+        "needs_clarification": false
+      },
+      {
+        "type": "follow_up",
+        "name": null,
+        "dosage": null,
+        "text": "we'll review in a week",
+        "first_mention_turn": 35,
+        "patient_explanation": "A follow-up appointment is scheduled to check on her condition and test results.",
+        "related_turns": [
+          35,
+          36
+        ],
+        "needs_clarification": false
+      }
+    ],
+    "highlighted_confusions": [],
+    "patient_friendly": {
+      "main_concerns": [
+        {
+          "title": "Stomach Burning",
+          "description": "Ms. Al-Jamal continues to experience stomach burning, which is worse in the late afternoon.",
+          "turns": [
+            1,
+            4,
+            9,
+            14,
+            22,
+            25
+          ]
+        }
+      ],
+      "next_steps": [
+        {
+          "title": "Complete Stool Test",
+          "description": "Ms. Al-Jamal needs to take the pink tablet before providing the stool sample for testing, which she said she misunderstood last time.",
+          "turns": [
+            10,
+            12,
+            13
+          ]
+        },
+        {
+          "title": "Stop Drinking Tea",
+          "description": "She should completely avoid drinking tea for a week to help with the symptoms.",
+          "turns": [
+            14,
+            16,
+            28
+          ]
+        },
+        {
+          "title": "Follow-up Appointment",
+          "description": "A follow-up appointment is scheduled in a week to check on her condition and test results.",
+          "turns": [
+            35,
+            36
+          ]
+        }
+      ],
+      "medication_notes": [
+        {
+          "title": "Green Bottle Medication",
+          "description": "This medication is taken every morning to help manage stomach issues and was confirmed to be taken by Ms. Al-Jamal.",
+          "turns": [
+            2,
+            10,
+            18,
+            26
+          ]
+        }
+      ],
+      "lifestyle_suggestions": [
+        {
+          "title": "Smaller, More Frequent Meals",
+          "description": "Encourage her to eat smaller meals more frequently and to include a small snack like plain crackers at 3 pm to buffer acid.",
+          "turns": [
+            28
+          ]
+        }
+      ]
+    },
+    "clinician_friendly": {
+      "assessment": [
+        {
+          "title": "Stomach Burning Symptoms",
+          "description": "Ms. Al-Jamal experiences stomach burning primarily in the afternoon and typically two hours after eating, which may suggest excess acid production.",
+          "turns": [
+            1,
+            22,
+            25
+          ]
+        }
+      ],
+      "recommendations": [
+        {
+          "title": "Stool Test for H. pylori",
+          "description": "A stool test should be conducted to check for H. pylori infection, which will guide treatment options.",
+          "turns": [
+            10,
+            14,
+            26
+          ]
+        },
+        {
+          "title": "Modify Diet Plan",
+          "description": "Advise Ms. Al-Jamal to avoid any potential irritants, including tea and herbal mixtures, until the diagnosis is clear.",
+          "turns": [
+            18,
+            28
+          ]
+        }
+      ],
+      "ambiguities": [
+        {
+          "title": "Understanding of Stool Sample Preparation",
+          "description": "Ms. Al-Jamal previously misunderstood the instructions regarding taking the pink tablet before the stool test.",
+          "turns": [
+            12
+          ]
+        }
+      ],
+      "differential_diagnoses": [
+        {
+          "title": "Gastritis or Peptic Ulcer Disease",
+          "description": "Consider potential diagnoses such as gastritis or peptic ulcer disease, which may cause similar symptoms.",
+          "turns": [
+            1,
+            22
+          ]
+        }
+      ],
+      "diagnostic_steps": [
+        {
+          "title": "Follow-up Testing",
+          "description": "Review stool test results in a week and adjust treatment based on findings.",
+          "turns": [
+            35,
+            36
+          ]
+        }
+      ]
+    }
+  },
+  "transcript": "Dr. Chen: Good afternoon, Ms. Al-Jamal. Hello Leila. How have things been?\n\nLeila: Hi, Dr. Chen. Mama still has that stomach burning. She says it\u2019s worse in the late afternoon now, not just after dinner.\n\nDr. Chen: I see. Could you ask her if she\u2019s taking the green bottle medication every morning as I instructed?\n\nLeila (in Arabic): \u0645\u0627\u0645\u0627\u060c \u0627\u0644\u062f\u0643\u062a\u0648\u0631\u0629 \u062a\u0633\u0623\u0644 \u0625\u0630\u0627 \u0643\u0646\u062a\u0650 \u062a\u0623\u062e\u0630\u064a\u0646 \u0627\u0644\u062f\u0648\u0627\u0621 \u0641\u064a \u0627\u0644\u0632\u062c\u0627\u062c\u0629 \u0627\u0644\u062e\u0636\u0631\u0627\u0621 \u0643\u0644 \u0635\u0628\u0627\u062d\u061f\nMs. Al-Jamal (in Arabic): \u0646\u0639\u0645\u060c \u0622\u062e\u0630\u0647\u0627 \u0642\u0628\u0644 \u0627\u0644\u0641\u0637\u0648\u0631 \u0643\u0644 \u064a\u0648\u0645\u060c \u0648\u0644\u0643\u0646 \u0627\u0644\u062d\u0631\u0642\u0629 \u0645\u0627 \u0632\u0627\u0644\u062a \u0645\u0648\u062c\u0648\u062f\u0629 \u0641\u064a \u0627\u0644\u0639\u0635\u0631.\nLeila: She says yes, before breakfast every day. Still feeling burning in the afternoon.\n\nDr. Chen: Afternoon burning. Did she reduce spicy and fried foods as we discussed?\n\nLeila (Arabic): \u0647\u0644 \u0642\u0644\u0644\u062a\u064a \u0627\u0644\u0623\u0637\u0639\u0645\u0629 \u0627\u0644\u062d\u0627\u0631\u0629 \u0648\u0627\u0644\u0645\u0642\u0644\u064a\u0629\u061f\nMs. Al-Jamal (Arabic): \u0646\u0639\u0645\u060c \u0642\u0644\u0644\u062a \u062c\u062f\u0627\u064b\u060c \u0648\u0623\u0643\u0644\u062a \u062e\u0628\u0632 \u0648\u0623\u0631\u0632 \u0623\u0643\u062b\u0631\u060c \u0644\u0643\u0646 \u0644\u0627 \u062a\u062d\u0633\u0646 \u0643\u0628\u064a\u0631.\nLeila: She cut down a lot, now she eats more bread and rice, but no big improvement.\n\nDr. Chen: What about the pink tablet for the stool test? She needed to take it before providing the sample.\n\nLeila (Arabic): \u0645\u0627\u0645\u0627\u060c \u0623\u062e\u0630\u062a\u064a \u0627\u0644\u062d\u0628\u0629 \u0627\u0644\u0648\u0631\u062f\u064a\u0629 \u0642\u0628\u0644 \u0627\u0644\u0627\u062e\u062a\u0628\u0627\u0631 \u0627\u0644\u0628\u0631\u0627\u0632\u064a\u061f\nMs. Al-Jamal (Arabic): \u0644\u0645 \u0623\u0641\u0647\u0645 \u0641\u064a \u0627\u0644\u0645\u0631\u0629 \u0627\u0644\u0633\u0627\u0628\u0642\u0629\u060c \u0638\u0646\u0646\u062a \u0623\u0646\u064a \u0623\u0646\u062a\u0638\u0631 \u0645\u0648\u0627\u0641\u0642\u062a\u0643. \u0627\u0644\u0622\u0646 \u0633\u0623\u0641\u0639\u0644.\nLeila: She says she misunderstood last time. Now she will take it and do the stool test. Maybe tomorrow.\n\nDr. Chen: Good. That test will check for H. pylori. If she has that bacterial infection, we\u2019ll treat it differently. Also, I asked her to avoid afternoon tea. Did she stop?\n\nLeila (Arabic): \u0647\u0644 \u062a\u0648\u0642\u0641\u062a\u0650 \u0639\u0646 \u0634\u0631\u0628 \u0627\u0644\u0634\u0627\u064a \u0641\u064a \u0627\u0644\u0639\u0635\u0631\u061f\nMs. Al-Jamal (Arabic): \u0644\u0645 \u0623\u062a\u0648\u0642\u0641 \u062a\u0645\u0627\u0645\u0627\u064b\u060c \u0623\u0634\u0631\u0628 \u0646\u0635\u0641 \u0627\u0644\u0643\u0648\u0628 \u0641\u0642\u0637.\nLeila: She says she cut down to half a cup, not fully stopped.\n\nDr. Chen: Even half a cup can trigger symptoms if she\u2019s sensitive. Tell her to stop completely for a week. Also, what about the herbal mixture her neighbor gave her?\n\nLeila (Arabic): \u0627\u0644\u062a\u0648\u0642\u0641 \u0639\u0646 \u0627\u0644\u0634\u0627\u064a \u0636\u0631\u0648\u0631\u064a. \u0648\u0628\u0627\u0644\u0646\u0633\u0628\u0629 \u0644\u0644\u062e\u0644\u0637\u0629 \u0627\u0644\u0639\u0634\u0628\u064a\u0629 \u0645\u0646 \u0627\u0644\u062c\u0627\u0631\u0629\u061f\nMs. Al-Jamal (Arabic): \u0645\u0627 \u0632\u0644\u062a \u0622\u062e\u0630 \u0645\u0644\u0639\u0642\u0629 \u0635\u063a\u064a\u0631\u0629 \u0639\u0646\u062f \u0627\u0644\u0623\u0644\u0645 \u0627\u0644\u0634\u062f\u064a\u062f. \u0645\u0631\u0651\u0629 \u0623\u0648 \u0645\u0631\u062a\u064a\u0646 \u0641\u064a \u0627\u0644\u0623\u0633\u0628\u0648\u0639.\nLeila: She still takes a teaspoon when pain is very bad, once or twice a week.\n\nDr. Chen: That could irritate her stomach lining. She should stop that too until we know what\u2019s going on. Also, has she noticed any pattern\u2014like if pain starts two hours after eating, or right away?\n\nLeila (Arabic): \u0647\u0644 \u064a\u0628\u062f\u0623 \u0627\u0644\u0623\u0644\u0645 \u0628\u0639\u062f \u0633\u0627\u0639\u062a\u064a\u0646 \u0645\u0646 \u0627\u0644\u0623\u0643\u0644 \u0623\u0645 \u0641\u0648\u0631\u0627\u064b\u061f\nMs. Al-Jamal (Arabic): \u063a\u0627\u0644\u0628\u0627\u064b \u0628\u0639\u062f \u0633\u0627\u0639\u062a\u064a\u0646. \u0628\u0639\u062f \u0627\u0644\u063a\u062f\u0627\u0621 \u0645\u062b\u0644\u0627\u064b\u060c \u0641\u064a \u0627\u0644\u0631\u0627\u0628\u0639\u0629 \u0639\u0635\u0631\u0627\u064b \u064a\u0628\u062f\u0623 \u0627\u0644\u0634\u0639\u0648\u0631 \u0628\u0627\u0644\u062d\u0631\u0642\u0627\u0646.\nLeila: Usually two hours after lunch. For example, she eats at 2 pm, then by 4 pm it starts to burn.\n\nDr. Chen: That timing might suggest excess acid production between meals. Once we get the stool test results, if it\u2019s H. pylori, I\u2019ll give her a specific antibiotic regimen along with a stronger acid blocker. If not, we may adjust the green bottle medication to a different class.\n\nLeila: Understood. Should she try anything else in the meantime?\n\nDr. Chen: Encourage her to eat smaller, more frequent meals. No big gaps between eating. Maybe a small snack of plain crackers at 3 pm to buffer acid. And absolutely no tea or herbal drinks for now.\n\nLeila (Arabic): \u0627\u0644\u062f\u0643\u062a\u0648\u0631\u0629 \u062a\u0642\u062a\u0631\u062d \u0648\u062c\u0628\u0629 \u062e\u0641\u064a\u0641\u0629 \u0628\u0633\u064a\u0637\u0629 \u062d\u0648\u0627\u0644\u064a \u0627\u0644\u0633\u0627\u0639\u0629 \u0627\u0644\u062b\u0627\u0644\u062b\u0629\u060c \u0645\u062b\u0644 \u0627\u0644\u0628\u0633\u0643\u0648\u064a\u062a \u0627\u0644\u0645\u0627\u0644\u062d\u060c \u0648\u0644\u0627 \u0634\u0627\u064a \u0648\u0644\u0627 \u0623\u0639\u0634\u0627\u0628 \u062d\u0627\u0644\u064a\u0627\u064b.\nMs. Al-Jamal (Arabic): \u062d\u0633\u0646\u064c\u060c \u0633\u0623\u0641\u0639\u0644 \u0630\u0644\u0643.\n\nDr. Chen: Also, did she lose more weight?\n\nLeila (Arabic): \u0647\u0644 \u0641\u0642\u062f\u062a\u0650 \u0648\u0632\u0646\u0627\u064b \u0623\u0643\u062b\u0631\u061f\nMs. Al-Jamal (Arabic): \u0642\u0644\u064a\u0644\u060c \u0644\u0623\u0646\u0646\u064a \u0623\u062e\u0627\u0641 \u0623\u0646 \u0622\u0643\u0644 \u0634\u064a\u0626\u0627\u064b \u064a\u0632\u064a\u062f \u0627\u0644\u062d\u0631\u0642\u0629.\nLeila: A little. She\u2019s afraid to eat much.\n\nDr. Chen: Understandable. Once we have clarity, we\u2019ll restore her confidence. Tell her we\u2019ll review in a week. If the stool test shows infection, we start treatment immediately. If not, I\u2019ll try a different medication. Keep a record of what she eats and when the pain occurs.\n\nLeila (Arabic): \u0633\u0646\u0639\u0648\u062f \u0628\u0639\u062f \u0623\u0633\u0628\u0648\u0639 \u0628\u0627\u0644\u0646\u062a\u0627\u0626\u062c. \u0625\u0630\u0627 \u0648\u062c\u062f\u0646\u0627 \u0628\u0643\u062a\u064a\u0631\u064a\u0627\u060c \u0646\u0639\u0637\u064a\u0643 \u062f\u0648\u0627\u0621 \u062e\u0627\u0635. \u0625\u0630\u0627 \u0644\u0627\u060c \u0646\u063a\u064a\u0631 \u0627\u0644\u062f\u0648\u0627\u0621. \u0633\u062c\u0644\u064a \u0643\u0644 \u0627\u0644\u0623\u0643\u0644 \u0648\u0627\u0644\u0623\u0648\u0642\u0627\u062a.\nMs. Al-Jamal (Arabic): \u062d\u0627\u0636\u0631.\n\nDr. Chen: Perfect. See you in a week."
+}

@@ -1,0 +1,61 @@
+Dr. Chen: Good afternoon, Ms. Al-Jamal. Hello Leila. How have things been?
+
+Leila: Hi, Dr. Chen. Mama still has that stomach burning. She says it’s worse in the late afternoon now, not just after dinner.
+
+Dr. Chen: I see. Could you ask her if she’s taking the green bottle medication every morning as I instructed?
+
+Leila (in Arabic): ماما، الدكتورة تسأل إذا كنتِ تأخذين الدواء في الزجاجة الخضراء كل صباح؟
+Ms. Al-Jamal (in Arabic): نعم، آخذها قبل الفطور كل يوم، ولكن الحرقة ما زالت موجودة في العصر.
+Leila: She says yes, before breakfast every day. Still feeling burning in the afternoon.
+
+Dr. Chen: Afternoon burning. Did she reduce spicy and fried foods as we discussed?
+
+Leila (Arabic): هل قللتي الأطعمة الحارة والمقلية؟
+Ms. Al-Jamal (Arabic): نعم، قللت جداً، وأكلت خبز وأرز أكثر، لكن لا تحسن كبير.
+Leila: She cut down a lot, now she eats more bread and rice, but no big improvement.
+
+Dr. Chen: What about the pink tablet for the stool test? She needed to take it before providing the sample.
+
+Leila (Arabic): ماما، أخذتي الحبة الوردية قبل الاختبار البرازي؟
+Ms. Al-Jamal (Arabic): لم أفهم في المرة السابقة، ظننت أني أنتظر موافقتك. الآن سأفعل.
+Leila: She says she misunderstood last time. Now she will take it and do the stool test. Maybe tomorrow.
+
+Dr. Chen: Good. That test will check for H. pylori. If she has that bacterial infection, we’ll treat it differently. Also, I asked her to avoid afternoon tea. Did she stop?
+
+Leila (Arabic): هل توقفتِ عن شرب الشاي في العصر؟
+Ms. Al-Jamal (Arabic): لم أتوقف تماماً، أشرب نصف الكوب فقط.
+Leila: She says she cut down to half a cup, not fully stopped.
+
+Dr. Chen: Even half a cup can trigger symptoms if she’s sensitive. Tell her to stop completely for a week. Also, what about the herbal mixture her neighbor gave her?
+
+Leila (Arabic): التوقف عن الشاي ضروري. وبالنسبة للخلطة العشبية من الجارة؟
+Ms. Al-Jamal (Arabic): ما زلت آخذ ملعقة صغيرة عند الألم الشديد. مرّة أو مرتين في الأسبوع.
+Leila: She still takes a teaspoon when pain is very bad, once or twice a week.
+
+Dr. Chen: That could irritate her stomach lining. She should stop that too until we know what’s going on. Also, has she noticed any pattern—like if pain starts two hours after eating, or right away?
+
+Leila (Arabic): هل يبدأ الألم بعد ساعتين من الأكل أم فوراً؟
+Ms. Al-Jamal (Arabic): غالباً بعد ساعتين. بعد الغداء مثلاً، في الرابعة عصراً يبدأ الشعور بالحرقان.
+Leila: Usually two hours after lunch. For example, she eats at 2 pm, then by 4 pm it starts to burn.
+
+Dr. Chen: That timing might suggest excess acid production between meals. Once we get the stool test results, if it’s H. pylori, I’ll give her a specific antibiotic regimen along with a stronger acid blocker. If not, we may adjust the green bottle medication to a different class.
+
+Leila: Understood. Should she try anything else in the meantime?
+
+Dr. Chen: Encourage her to eat smaller, more frequent meals. No big gaps between eating. Maybe a small snack of plain crackers at 3 pm to buffer acid. And absolutely no tea or herbal drinks for now.
+
+Leila (Arabic): الدكتورة تقترح وجبة خفيفة بسيطة حوالي الساعة الثالثة، مثل البسكويت المالح، ولا شاي ولا أعشاب حالياً.
+Ms. Al-Jamal (Arabic): حسنٌ، سأفعل ذلك.
+
+Dr. Chen: Also, did she lose more weight?
+
+Leila (Arabic): هل فقدتِ وزناً أكثر؟
+Ms. Al-Jamal (Arabic): قليل، لأنني أخاف أن آكل شيئاً يزيد الحرقة.
+Leila: A little. She’s afraid to eat much.
+
+Dr. Chen: Understandable. Once we have clarity, we’ll restore her confidence. Tell her we’ll review in a week. If the stool test shows infection, we start treatment immediately. If not, I’ll try a different medication. Keep a record of what she eats and when the pain occurs.
+
+Leila (Arabic): سنعود بعد أسبوع بالنتائج. إذا وجدنا بكتيريا، نعطيك دواء خاص. إذا لا، نغير الدواء. سجلي كل الأكل والأوقات.
+Ms. Al-Jamal (Arabic): حاضر.
+
+Dr. Chen: Perfect. See you in a week.
